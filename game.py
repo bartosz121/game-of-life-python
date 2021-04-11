@@ -1,4 +1,3 @@
-import itertools
 import random
 import pygame
 import time
@@ -66,6 +65,8 @@ class Cell:
     @color.setter
     def color(self, new_color: Color):
         self._color = new_color.RGB
+
+##################################################################
 
 
 def get_game_info():
