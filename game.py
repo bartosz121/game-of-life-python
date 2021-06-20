@@ -2,7 +2,8 @@ import random
 import pygame
 import time
 from cell import Cell
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BACKGROUND, N_CELLS_VERTICAL, N_CELLS_HORIZONTAL, N_CELLS, CELL_WIDTH, CELL_HEIGHT, CELL_DEFAULT_COLOR
+from constants import FPS, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BACKGROUND, N_CELLS_VERTICAL,\
+    N_CELLS_HORIZONTAL, N_CELLS, CELL_WIDTH, CELL_HEIGHT, CELL_DEFAULT_COLOR, BASIC_COLORS
 
 
 def get_game_info():
@@ -64,7 +65,14 @@ def game():
     get_game_info()
     pygame.display.set_caption("Conway's Game of Life")
     display_surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    clock = pygame.time.Clock()
+    font = pygame.font.SysFont("Arial", 18)
     display_surface.fill(SCREEN_BACKGROUND.RGB)
+
+    def update_fps():
+        fps = str(int(clock.get_fps()))
+        fps_text = font.render(fps, True, BASIC_COLORS["WHITE"].RGB)
+        return fps_text
 
     # Create cells
     for x in range(N_CELLS_HORIZONTAL):
@@ -112,14 +120,15 @@ def game():
                     if cell.num_neighbors == 3:
                         cell.is_alive = True
                 pygame.draw.rect(display_surface, cell.color, cell.rect)
-        # DONT USE SLEEP FIX LATER
-        # time.sleep(0.1)
-        pygame.display.flip()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+
+        display_surface.blit(update_fps(), (10, 0))
+        pygame.display.update()
+        clock.tick(FPS)
         # print(pygame.mouse.get_pos())
 
 
