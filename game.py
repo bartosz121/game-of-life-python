@@ -136,8 +136,26 @@ def game():
             cells[x].append(Cell(x*CELL_WIDTH, y*CELL_HEIGHT))
 
     # Set Alive random cells
-    for i in range(N_CELLS//2):
+    for i in range((N_CELLS//100)*95):
         cells[random.randint(0, N_CELLS_HORIZONTAL-1)][random.randint(0, N_CELLS_VERTICAL-1)].isAlive = True
+    
+
+    # The R-pentomino
+    # cells[81][45].isAlive = True
+    # cells[80][47].isAlive = True
+    # cells[80][46].isAlive = True
+    # cells[79][46].isAlive = True
+    # cells[80][45].isAlive = True
+    
+
+    # Acorn
+    # cells[77][46].isAlive = True
+    # cells[78][46].isAlive = True
+    # cells[78][44].isAlive = True
+    # cells[80][45].isAlive = True
+    # cells[81][46].isAlive = True
+    # cells[82][46].isAlive = True
+    # cells[83][46].isAlive = True
 
     # Game loop
     while True:
@@ -159,7 +177,7 @@ def game():
                         cell.isAlive = True
                 pygame.draw.rect(display_surface, cell.color, cell.rect)
         # DONT USE SLEEP FIX LATER
-        time.sleep(0.01)
+        # time.sleep(0.1)
         pygame.display.flip()
 
         for event in pygame.event.get():
