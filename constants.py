@@ -1,4 +1,6 @@
 import math
+import pygame.font
+
 from color import Color
 
 # ---Constants---
@@ -12,6 +14,12 @@ BASIC_COLORS = {
 FPS = 60
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
+NORMAL_FONT_SIZE = math.ceil(18*(SCREEN_WIDTH/SCREEN_HEIGHT))
+FONT_SIZE = {
+    "NORMAL": NORMAL_FONT_SIZE,
+    "MEDIUM": NORMAL_FONT_SIZE * 2,
+    "BIG": NORMAL_FONT_SIZE * 3
+}
 SCREEN_BACKGROUND = BASIC_COLORS["BLUE"]
 CELL_WIDTH = 8
 CELL_HEIGHT = 8
