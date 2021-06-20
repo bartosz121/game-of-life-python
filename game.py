@@ -10,6 +10,8 @@ def get_game_info():
     print(f"==============GAME=OF=LIFE===============\n"
           f"SCREEN:\n"
           f"\t{SCREEN_WIDTH}x{SCREEN_HEIGHT}\n"
+          f"FPS CAP:\n"
+          f"\t{FPS}\n"
           f"CELL:\n"
           f"\tSIZE: {CELL_WIDTH}x{CELL_HEIGHT}\n"
           f"\tCOLOR: {CELL_DEFAULT_COLOR}\n"
