@@ -29,8 +29,8 @@ class Cell:
     def __repr__(self):
         return f"============================\n" \
                f"\tCell({self.x}, {self.y})\n" \
-               f"\tisAlive: {self.isAlive}\n" \
-               f"\tNeighbors(Alive): {self.numNeighbors}\n" \
+               f"\tisAlive: {self.is_alive}\n" \
+               f"\tNeighbors(Alive): {self.num_neighbors}\n" \
                f"\tColor: {self.color}\n" \
                f"============================"
 
@@ -38,19 +38,19 @@ class Cell:
         return f"({self.x}, {self.y})"
 
     @property
-    def numNeighbors(self):
+    def num_neighbors(self):
         return self._numNeighbors
 
-    @numNeighbors.setter
-    def numNeighbors(self, n):
+    @num_neighbors.setter
+    def num_neighbors(self, n):
         self._numNeighbors = n
 
     @property
-    def isAlive(self):
+    def is_alive(self):
         return self._isAlive
 
-    @isAlive.setter
-    def isAlive(self, state: bool):
+    @is_alive.setter
+    def is_alive(self, state: bool):
         # if cell is alive change color to black if not to background color
         if state:
             self.color = BLACK
@@ -89,38 +89,38 @@ def count_neighbors():
             cell = cells[x][y]
             # North
             if y-1 >= 0:
-                if cells[x][y-1].isAlive:
+                if cells[x][y-1].is_alive:
                     result += 1
             # South
             if y+1 <= N_CELLS_VERTICAL-1:
-                if cells[x][y+1].isAlive:
+                if cells[x][y+1].is_alive:
                     result += 1
             # West
             if x-1 >= 0:
-                if cells[x-1][y].isAlive:
+                if cells[x-1][y].is_alive:
                     result += 1
             # East
             if x+1 <= N_CELLS_HORIZONTAL-1:
-                if cells[x+1][y].isAlive:
+                if cells[x+1][y].is_alive:
                     result += 1
             # North-East
             if y-1 >= 0 and x+1 <= N_CELLS_HORIZONTAL-1:
-                if cells[x+1][y-1].isAlive:
+                if cells[x+1][y-1].is_alive:
                     result += 1
             # North-West
             if y-1 >= 0 and x-1 >= 0:
-                if cells[x-1][y-1].isAlive:
+                if cells[x-1][y-1].is_alive:
                     result += 1
             # South-East
             if y+1 <= N_CELLS_VERTICAL-1 and x+1 <= N_CELLS_HORIZONTAL-1:
-                if cells[x+1][y+1].isAlive:
+                if cells[x+1][y+1].is_alive:
                     result += 1
             # South-West
             if y+1 <= N_CELLS_VERTICAL-1 and x-1 >= 0:
-                if cells[x-1][y+1].isAlive:
+                if cells[x-1][y+1].is_alive:
                     result += 1
 
-            cell.numNeighbors = result
+            cell.num_neighbors = result
 
 
 def game():
@@ -137,25 +137,25 @@ def game():
 
     # Set Alive random cells
     for i in range((N_CELLS//100)*95):
-        cells[random.randint(0, N_CELLS_HORIZONTAL-1)][random.randint(0, N_CELLS_VERTICAL-1)].isAlive = True
+        cells[random.randint(0, N_CELLS_HORIZONTAL-1)][random.randint(0, N_CELLS_VERTICAL-1)].is_alive = True
     
 
     # The R-pentomino
-    # cells[81][45].isAlive = True
-    # cells[80][47].isAlive = True
-    # cells[80][46].isAlive = True
-    # cells[79][46].isAlive = True
-    # cells[80][45].isAlive = True
+    # cells[81][45].is_alive = True
+    # cells[80][47].is_alive = True
+    # cells[80][46].is_alive = True
+    # cells[79][46].is_alive = True
+    # cells[80][45].is_alive = True
     
 
     # Acorn
-    # cells[77][46].isAlive = True
-    # cells[78][46].isAlive = True
-    # cells[78][44].isAlive = True
-    # cells[80][45].isAlive = True
-    # cells[81][46].isAlive = True
-    # cells[82][46].isAlive = True
-    # cells[83][46].isAlive = True
+    # cells[77][46].is_alive = True
+    # cells[78][46].is_alive = True
+    # cells[78][44].is_alive = True
+    # cells[80][45].is_alive = True
+    # cells[81][46].is_alive = True
+    # cells[82][46].is_alive = True
+    # cells[83][46].is_alive = True
 
     # Game loop
     while True:
@@ -169,12 +169,12 @@ def game():
                 # Any dead cell with three live neighbours becomes a live cell.
                 # All other live cells die in the next generation.
                 # All other dead cells stay dead.
-                if cell.isAlive:
-                    if cell.numNeighbors != 2 and cell.numNeighbors != 3:
-                        cell.isAlive = False
+                if cell.is_alive:
+                    if cell.num_neighbors != 2 and cell.num_neighbors != 3:
+                        cell.is_alive = False
                 else:
-                    if cell.numNeighbors == 3:
-                        cell.isAlive = True
+                    if cell.num_neighbors == 3:
+                        cell.is_alive = True
                 pygame.draw.rect(display_surface, cell.color, cell.rect)
         # DONT USE SLEEP FIX LATER
         # time.sleep(0.1)
