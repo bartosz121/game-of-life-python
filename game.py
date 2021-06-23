@@ -24,7 +24,7 @@ class Game:
         pygame.display.set_caption("Conway's Game of Life")
         self.running = True
         self.playing = False
-        self._mode = self.main_menu
+        self.mode = self.main_menu
         self.game_state = "main_menu"
         self.screen_width = s_width
         self.screen_height = s_height
@@ -73,6 +73,10 @@ class Game:
     def mode(self):
         return self._mode
 
+    @mode.setter
+    def mode(self, value):
+        self._mode = value
+
     @property
     def game_state(self):
         return self._game_state
@@ -82,22 +86,22 @@ class Game:
         print(value)
         if value == "main_menu":
             self._game_state = value
-            self._mode = self.main_menu
+            self.mode = self.main_menu
         elif value == "start_game_menu":
             self._game_state = value
-            self._mode = self.start_game_menu
+            self.mode = self.start_game_menu
         elif value == "playing":
             self._game_state = value
-            self._mode = self.play
+            self.mode = self.play
         elif value == "map_editor":
             self._game_state = value
-            self._mode = self.map_editor
+            self.mode = self.map_editor
         elif value == "settings":
             self._game_state = value
-            self._mode = self.settings_menu
+            self.mode = self.settings_menu
         elif value == "pause":
             self._game_state = value
-            self._mode = self.pause
+            self.mode = self.pause
         else:
             self.game_state = "main_menu"
 
