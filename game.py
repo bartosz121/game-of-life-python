@@ -38,6 +38,11 @@ class Game:
             "big": pygame.font.SysFont("Arial", FONT_SIZE["BIG"])
         }
 
+        # Buttons prefix:
+        # mm_ = main_menu
+        # sg_ = start_game
+        # s_ = settings
+        self.buttons = {}
         self.cells = {row: [] for row in range(N_CELLS_HORIZONTAL)}
         self.alive_cells = 0
 
@@ -126,16 +131,35 @@ class Game:
                        (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
 
         self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 10)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB,
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "mm_start_game",
                                    "Start game", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
 
         self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 10)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB,
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "mm_settings",
                                    "Settings", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
 
         self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB,
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "mm_quit",
                                    "Quit", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+
+    def start_game_menu(self):
+        if self.game_state != "start_game_menu":
+            self.game_state = "start_game_menu"
+        self.display.fill(SCREEN_BACKGROUND.RGB)
+        # self.draw_text("Start Game", self.fonts["medium"], BASIC_COLORS["BLACK"].RGB,
+        #                (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
+        #
+        # self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 10)),
+        #                            (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB,
+        #                            "Random alive cells", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        #
+        # self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 10)),
+        #                            (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB,
+        #                            "Map editor", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        #
+        # self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
+        #                            (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB,
+        #                            "Go back", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
 
     def play(self):
         def _count_neighbors():
@@ -242,13 +266,14 @@ class Game:
         text_rect.topleft = pos
         self.display.blit(text_obj, text_rect)
 
-    def draw_button(self, pos, size, color):
+    def draw_button(self, pos, size, color, name):
         btn = pygame.Rect(pos, size)
+        self.buttons[name] = btn
         btn.topleft = (pos[0]-size[0]//2, pos[1]-size[1]//2)
         pygame.draw.rect(self.display, color, btn)
 
-    def draw_button_with_text(self, pos, size, btn_color, text, font, text_color):
-        self.draw_button(pos, size, btn_color)
+    def draw_button_with_text(self, pos, size, btn_color, btn_name, text, font, text_color):
+        self.draw_button(pos, size, btn_color, btn_name)
         self.draw_text(text, font, text_color, pos)
 
     def reset_keys(self):
