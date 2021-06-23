@@ -83,7 +83,6 @@ class Game:
 
     @game_state.setter
     def game_state(self, value):
-        print(value)
         if value == "main_menu":
             self._game_state = value
             self.mode = self.main_menu
@@ -118,7 +117,7 @@ class Game:
             BASIC_COLORS["WHITE"].RGB, (10, 0), center=False)
             pygame.display.update()
 
-            print(pygame.mouse.get_pos())
+            # print(pygame.mouse.get_pos())
 
     def run_state(self):
         return self.mode()
@@ -150,6 +149,7 @@ class Game:
                 pygame.quit()
         elif self.game_state == "start_game_menu":
             if self.buttons["sg_random"].collidepoint((mx, my)):
+                self.create_clean_game_state(mode="random")
                 self.game_state = "playing"
             elif self.buttons["sg_map_editor"].collidepoint((mx, my)):
                 # TODO map editor
@@ -222,78 +222,85 @@ class Game:
                                    (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "s_back",
                                    "TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
 
+    def count_neighbors(self):
+        for x in range(N_CELLS_HORIZONTAL):
+            for y in range(N_CELLS_VERTICAL):
+                result = 0
+                cell = self.cells[x][y]
+                # North
+                if y - 1 >= 0:
+                    if self.cells[x][y - 1].is_alive:
+                        result += 1
+                # South
+                if y + 1 <= N_CELLS_VERTICAL - 1:
+                    if self.cells[x][y + 1].is_alive:
+                        result += 1
+                # West
+                if x - 1 >= 0:
+                    if self.cells[x - 1][y].is_alive:
+                        result += 1
+                # East
+                if x + 1 <= N_CELLS_HORIZONTAL - 1:
+                    if self.cells[x + 1][y].is_alive:
+                        result += 1
+                # North-East
+                if y - 1 >= 0 and x + 1 <= N_CELLS_HORIZONTAL - 1:
+                    if self.cells[x + 1][y - 1].is_alive:
+                        result += 1
+                # North-West
+                if y - 1 >= 0 and x - 1 >= 0:
+                    if self.cells[x - 1][y - 1].is_alive:
+                        result += 1
+                # South-East
+                if y + 1 <= N_CELLS_VERTICAL - 1 and x + 1 <= N_CELLS_HORIZONTAL - 1:
+                    if self.cells[x + 1][y + 1].is_alive:
+                        result += 1
+                # South-West
+                if y + 1 <= N_CELLS_VERTICAL - 1 and x - 1 >= 0:
+                    if self.cells[x - 1][y + 1].is_alive:
+                        result += 1
+
+                cell.num_neighbors = result
+
+    def create_cells(self):
+        for x in range(N_CELLS_HORIZONTAL):
+            for y in range(N_CELLS_VERTICAL):
+                self.cells[x].append(Cell(x * CELL_WIDTH, y * CELL_HEIGHT))
+
+    def set_alive_random_cells(self):
+        for i in range((N_CELLS // 100) * 95):
+            self.cells[random.randint(0, N_CELLS_HORIZONTAL - 1)][
+                random.randint(0, N_CELLS_VERTICAL - 1)].is_alive = True
+
+    def create_clean_game_state(self, mode):
+        self.create_cells()
+        if mode == "random":
+            self.set_alive_random_cells()
+        else:
+            self.set_alive_random_cells()
+            
     def play(self):
-        def _count_neighbors():
-            for x in range(N_CELLS_HORIZONTAL):
-                for y in range(N_CELLS_VERTICAL):
-                    result = 0
-                    cell = self.cells[x][y]
-                    # North
-                    if y - 1 >= 0:
-                        if self.cells[x][y - 1].is_alive:
-                            result += 1
-                    # South
-                    if y + 1 <= N_CELLS_VERTICAL - 1:
-                        if self.cells[x][y + 1].is_alive:
-                            result += 1
-                    # West
-                    if x - 1 >= 0:
-                        if self.cells[x - 1][y].is_alive:
-                            result += 1
-                    # East
-                    if x + 1 <= N_CELLS_HORIZONTAL - 1:
-                        if self.cells[x + 1][y].is_alive:
-                            result += 1
-                    # North-East
-                    if y - 1 >= 0 and x + 1 <= N_CELLS_HORIZONTAL - 1:
-                        if self.cells[x + 1][y - 1].is_alive:
-                            result += 1
-                    # North-West
-                    if y - 1 >= 0 and x - 1 >= 0:
-                        if self.cells[x - 1][y - 1].is_alive:
-                            result += 1
-                    # South-East
-                    if y + 1 <= N_CELLS_VERTICAL - 1 and x + 1 <= N_CELLS_HORIZONTAL - 1:
-                        if self.cells[x + 1][y + 1].is_alive:
-                            result += 1
-                    # South-West
-                    if y + 1 <= N_CELLS_VERTICAL - 1 and x - 1 >= 0:
-                        if self.cells[x - 1][y + 1].is_alive:
-                            result += 1
-
-                    cell.num_neighbors = result
-
         if self.game_state != "playing":
             self.game_state = "playing"
-            # Create cells
-            for x in range(N_CELLS_HORIZONTAL):
-                for y in range(N_CELLS_VERTICAL):
-                    self.cells[x].append(Cell(x * CELL_WIDTH, y * CELL_HEIGHT))
 
-            # TODO if user want random cells
-            # Set Alive random cells
-            for i in range((N_CELLS // 100) * 95):
-                self.cells[random.randint(0, N_CELLS_HORIZONTAL - 1)][
-                    random.randint(0, N_CELLS_VERTICAL - 1)].is_alive = True
+        # The R-pentomino
+        # cells[81][45].is_alive = True
+        # cells[80][47].is_alive = True
+        # cells[80][46].is_alive = True
+        # cells[79][46].is_alive = True
+        # cells[80][45].is_alive = True
 
-            # The R-pentomino
-            # cells[81][45].is_alive = True
-            # cells[80][47].is_alive = True
-            # cells[80][46].is_alive = True
-            # cells[79][46].is_alive = True
-            # cells[80][45].is_alive = True
-
-            # Acorn
-            # cells[77][46].is_alive = True
-            # cells[78][46].is_alive = True
-            # cells[78][44].is_alive = True
-            # cells[80][45].is_alive = True
-            # cells[81][46].is_alive = True
-            # cells[82][46].is_alive = True
-            # cells[83][46].is_alive = True
+        # Acorn
+        # cells[77][46].is_alive = True
+        # cells[78][46].is_alive = True
+        # cells[78][44].is_alive = True
+        # cells[80][45].is_alive = True
+        # cells[81][46].is_alive = True
+        # cells[82][46].is_alive = True
+        # cells[83][46].is_alive = True
 
         # Game loop
-        _count_neighbors()
+        self.count_neighbors()
 
         for x in range(N_CELLS_HORIZONTAL):
             for y in range(N_CELLS_VERTICAL):
