@@ -31,7 +31,7 @@ class Game:
         self.fps = fps
         self.display = pygame.display.set_mode((self.screen_width, self.screen_height))
         self.clock = pygame.time.Clock()
-        self.RESTART_KEY, self.PAUSE_KEY, self.QUIT_KEY = False, False, False
+        self.PAUSE_KEY, self.QUIT_KEY = False, False
         self.fonts = {
             "standard": pygame.font.SysFont("Arial", FONT_SIZE["NORMAL"]),
             "medium": pygame.font.SysFont("Arial", FONT_SIZE["MEDIUM"]),
@@ -41,6 +41,7 @@ class Game:
         # Buttons prefix:
         # mm_ = main_menu
         # sg_ = start_game
+        # p_ = paused
         # s_ = settings
         self.buttons = {}
         self.cells = {row: [] for row in range(N_CELLS_HORIZONTAL)}
@@ -98,11 +99,32 @@ class Game:
         elif value == "settings":
             self._game_state = value
             self.mode = self.settings_menu
-        elif value == "pause":
+        elif value == "paused":
             self._game_state = value
             self.mode = self.pause
         else:
             self.game_state = "main_menu"
+
+    @property
+    def PAUSE_KEY(self):
+        return self.PAUSE_KEY
+
+    @PAUSE_KEY.setter
+    def PAUSE_KEY(self, value):
+        if value:
+            if self.game_state == "playing":
+                self.game_state = "paused"
+            elif self.game_state == "paused":
+                self.game_state = "playing"
+
+    @property
+    def QUIT_KEY(self):
+        return self.QUIT_KEY
+
+    @QUIT_KEY.setter
+    def QUIT_KEY(self, value):
+        if value:
+            pygame.quit()
 
     def _get_fps(self):
         return str(int(self.clock.get_fps()))
@@ -131,8 +153,6 @@ class Game:
                 self.running = False
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
-                    self.RESTART_KEY = True
                 if event.key == pygame.K_p:
                     self.PAUSE_KEY = True
                 if event.key == pygame.K_q:
@@ -158,6 +178,13 @@ class Game:
                 # TODO map editor
                 self.game_state = "main_menu"
             elif self.buttons["sg_back"].collidepoint((mx, my)):
+                self.game_state = "main_menu"
+        elif self.game_state == "paused":
+            if self.buttons["p_todo1"].collidepoint((mx, my)):
+                self.game_state = "main_menu"
+            elif self.buttons["p_todo2"].collidepoint((mx, my)):
+                self.game_state = "main_menu"
+            elif self.buttons["p_main_menu"].collidepoint((mx, my)):
                 self.game_state = "main_menu"
         elif self.game_state == "settings":
             # TODO settings
@@ -326,7 +353,25 @@ class Game:
         pass
 
     def pause(self):
-        pass
+        if self.game_state != "paused":
+            self.game_state = "paused"
+        self.draw_text("PAUSED", self.fonts["medium"], BASIC_COLORS["WHITE"].RGB,
+                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
+        self.draw_text("Click p to unpause", self.fonts["standard"],
+                       BASIC_COLORS["WHITE"].RGB,
+                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 20)))
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 10)),
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_todo1",
+                                   "Save current state TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 10)),
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_todo2",
+                                   "Save starting state TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_main_menu",
+                                   "Back to Main Menu", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
 
     def draw_text(self, text, font, color, pos, center=True):
         text_obj = font.render(text, True, color)
@@ -348,7 +393,7 @@ class Game:
         self.draw_text(text, font, text_color, pos)
 
     def reset_keys(self):
-        self.RESTART_KEY, self.PAUSE_KEY, self.QUIT_KEY = False, False, False
+        self.PAUSE_KEY, self.QUIT_KEY = False, False
 
     def get_game_info(self):
         print(f"==============GAME=OF=LIFE===============\n"
