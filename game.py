@@ -79,18 +79,27 @@ class Game:
 
     @game_state.setter
     def game_state(self, value):
+        print(value)
         if value == "main_menu":
             self._game_state = value
             self._mode = self.main_menu
+        elif value == "start_game_menu":
+            self._game_state = value
+            self._mode = self.start_game_menu
         elif value == "playing":
             self._game_state = value
             self._mode = self.play
         elif value == "map_editor":
             self._game_state = value
             self._mode = self.map_editor
+        elif value == "settings":
+            self._game_state = value
+            self._mode = self.settings_menu
         elif value == "pause":
             self._game_state = value
             self._mode = self.pause
+        else:
+            self.game_state = "main_menu"
 
     def _get_fps(self):
         return str(int(self.clock.get_fps()))
@@ -122,6 +131,35 @@ class Game:
                     self.PAUSE_KEY = True
                 if event.key == pygame.K_q:
                     self.QUIT_KEY = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    self.check_mouse_click()
+
+    def check_mouse_click(self):
+        mx, my = pygame.mouse.get_pos()
+        if self.game_state == "main_menu":
+            if self.buttons["mm_start_game"].collidepoint((mx, my)):
+                self.game_state = "start_game_menu"
+            elif self.buttons["mm_settings"].collidepoint((mx, my)):
+                self.game_state = "settings"
+            elif self.buttons["mm_quit"].collidepoint((mx, my)):
+                pygame.quit()
+        elif self.game_state == "start_game_menu":
+            if self.buttons["sg_random"].collidepoint((mx, my)):
+                self.game_state = "playing"
+            elif self.buttons["sg_map_editor"].collidepoint((mx, my)):
+                # TODO map editor
+                self.game_state = "main_menu"
+            elif self.buttons["sg_back"].collidepoint((mx, my)):
+                self.game_state = "main_menu"
+        elif self.game_state == "settings":
+            # TODO settings
+            if self.buttons["s_todo1"].collidepoint((mx, my)):
+                self.game_state = "main_menu"
+            elif self.buttons["s_todo2"].collidepoint((mx, my)):
+                self.game_state = "main_menu"
+            elif self.buttons["s_back"].collidepoint((mx, my)):
+                self.game_state = "main_menu"
 
     def main_menu(self):
         if self._game_state != "main_menu":
@@ -146,20 +184,39 @@ class Game:
         if self.game_state != "start_game_menu":
             self.game_state = "start_game_menu"
         self.display.fill(SCREEN_BACKGROUND.RGB)
-        # self.draw_text("Start Game", self.fonts["medium"], BASIC_COLORS["BLACK"].RGB,
-        #                (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
-        #
-        # self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 10)),
-        #                            (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB,
-        #                            "Random alive cells", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
-        #
-        # self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 10)),
-        #                            (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB,
-        #                            "Map editor", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
-        #
-        # self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
-        #                            (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB,
-        #                            "Go back", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_text("Start Game", self.fonts["medium"], BASIC_COLORS["BLACK"].RGB,
+                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 10)),
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "sg_random",
+                                   "Random alive cells", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 10)),
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "sg_map_editor",
+                                   "Map editor", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "sg_back",
+                                   "Go back", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+
+    def settings_menu(self):
+        if self.game_state != "settings":
+            self.game_state = "settings"
+        self.display.fill(SCREEN_BACKGROUND.RGB)
+        self.draw_text("Settings", self.fonts["medium"], BASIC_COLORS["BLACK"].RGB,
+                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 10)),
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "s_todo1",
+                                   "TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 10)),
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "s_todo2",
+                                   "TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "s_back",
+                                   "TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
 
     def play(self):
         def _count_neighbors():
