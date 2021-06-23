@@ -110,7 +110,10 @@ class Game:
     def game_loop(self):
         while self.running:
             self.check_events()
-            self.clock.tick(self.fps)
+            if self.game_state == "playing":
+                self.clock.tick(self.fps)
+            else:
+                self.clock.tick(60)
             self.reset_keys()
             self.run_state()
             self.draw_text(self._get_fps(), self.fonts["standard"],
