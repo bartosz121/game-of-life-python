@@ -1,13 +1,15 @@
 from pygame import Rect
 from color import Color
-from constants import BASIC_COLORS, CELL_DEFAULT_COLOR, CELL_WIDTH, CELL_HEIGHT, SCREEN_BACKGROUND
+from settings import BASIC_COLORS, CELL_DEFAULT_COLOR, CELL_WIDTH, CELL_HEIGHT, SCREEN_BACKGROUND
+
+
 class Cell:
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self._color = CELL_DEFAULT_COLOR.RGB
-        self._isAlive = False
-        self._numNeighbors = 0
+        self._is_alive = False
+        self._num_neighbors = 0
         # pygame.Rect(left, top, width, height)
         # pygame.Rect(x, y, CELL_WIDTH, CELL_HEIGHT)
         self.rect = Rect(x, y, CELL_WIDTH, CELL_HEIGHT)
@@ -25,15 +27,15 @@ class Cell:
 
     @property
     def num_neighbors(self):
-        return self._numNeighbors
+        return self._num_neighbors
 
     @num_neighbors.setter
     def num_neighbors(self, n):
-        self._numNeighbors = n
+        self._num_neighbors = n
 
     @property
     def is_alive(self):
-        return self._isAlive
+        return self._is_alive
 
     @is_alive.setter
     def is_alive(self, state: bool):
@@ -42,7 +44,7 @@ class Cell:
             self.color = BASIC_COLORS["BLACK"]
         else:
             self.color = SCREEN_BACKGROUND
-        self._isAlive = state
+        self._is_alive = state
 
     @property
     def color(self):
