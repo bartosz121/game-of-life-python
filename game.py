@@ -214,9 +214,8 @@ class Game:
                         # (True -> False // False -> True)
                         cell.is_alive = not cell.is_alive
 
+    # Game modes
     def main_menu(self):
-        if self._game_state != "main_menu":
-            self.game_state = "main_menu"
         self.display.fill(SCREEN_BACKGROUND.RGB)
         self.draw_text("Game of Life", self.fonts["medium"], BASIC_COLORS["BLACK"].RGB,
                        (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
@@ -234,8 +233,6 @@ class Game:
                                    "Quit", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
 
     def start_game_menu(self):
-        if self.game_state != "start_game_menu":
-            self.game_state = "start_game_menu"
         self.display.fill(SCREEN_BACKGROUND.RGB)
         self.draw_text("Start Game", self.fonts["medium"], BASIC_COLORS["BLACK"].RGB,
                        (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
@@ -253,8 +250,6 @@ class Game:
                                    "Go back", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
 
     def settings_menu(self):
-        if self.game_state != "settings":
-            self.game_state = "settings"
         self.display.fill(SCREEN_BACKGROUND.RGB)
         self.draw_text("Settings", self.fonts["medium"], BASIC_COLORS["BLACK"].RGB,
                        (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
@@ -271,6 +266,71 @@ class Game:
                                    (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "s_back",
                                    "TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
 
+    def play(self):
+        # The R-pentomino
+        # cells[81][45].is_alive = True
+        # cells[80][47].is_alive = True
+        # cells[80][46].is_alive = True
+        # cells[79][46].is_alive = True
+        # cells[80][45].is_alive = True
+
+        # Acorn
+        # cells[77][46].is_alive = True
+        # cells[78][46].is_alive = True
+        # cells[78][44].is_alive = True
+        # cells[80][45].is_alive = True
+        # cells[81][46].is_alive = True
+        # cells[82][46].is_alive = True
+        # cells[83][46].is_alive = True
+
+        # Game loop
+        self.count_neighbors()
+
+        for x in range(N_CELLS_HORIZONTAL):
+            for y in range(N_CELLS_VERTICAL):
+                cell = self.cells[x][y]
+
+                # Check for rules here
+                # Any live cell with two or three live neighbours survives.
+                # Any dead cell with three live neighbours becomes a live cell.
+                # All other live cells die in the next generation.
+                # All other dead cells stay dead.
+                if cell.is_alive:
+                    if cell.num_neighbors != 2 and cell.num_neighbors != 3:
+                        cell.is_alive = False
+                else:
+                    if cell.num_neighbors == 3:
+                        cell.is_alive = True
+                pygame.draw.rect(self.display, cell.color, cell.rect)
+
+    def map_editor(self):
+        self.display.fill(SCREEN_BACKGROUND.RGB)
+        # self.check_mouse_click()
+        for x in range(N_CELLS_HORIZONTAL):
+            for y in range(N_CELLS_VERTICAL):
+                cell = self.cells[x][y]
+                pygame.draw.rect(self.display, cell.color, cell.rect)
+
+    def pause(self):
+        self.draw_text("PAUSED", self.fonts["medium"], BASIC_COLORS["WHITE"].RGB,
+                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
+        self.draw_text("Click p to unpause", self.fonts["standard"],
+                       BASIC_COLORS["WHITE"].RGB,
+                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 20)))
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 10)),
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_todo1",
+                                   "Save current state TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 10)),
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_todo2",
+                                   "Save starting state TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
+                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_main_menu",
+                                   "Back to Main Menu", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+
+    # 'Playing' mode methods
     def count_neighbors(self):
         for x in range(N_CELLS_HORIZONTAL):
             for y in range(N_CELLS_VERTICAL):
@@ -327,76 +387,8 @@ class Game:
             self.set_alive_random_cells()
         else:
             self.set_alive_random_cells()
-            
-    def play(self):
-        if self.game_state != "playing":
-            self.game_state = "playing"
 
-        # The R-pentomino
-        # cells[81][45].is_alive = True
-        # cells[80][47].is_alive = True
-        # cells[80][46].is_alive = True
-        # cells[79][46].is_alive = True
-        # cells[80][45].is_alive = True
-
-        # Acorn
-        # cells[77][46].is_alive = True
-        # cells[78][46].is_alive = True
-        # cells[78][44].is_alive = True
-        # cells[80][45].is_alive = True
-        # cells[81][46].is_alive = True
-        # cells[82][46].is_alive = True
-        # cells[83][46].is_alive = True
-
-        # Game loop
-        self.count_neighbors()
-
-        for x in range(N_CELLS_HORIZONTAL):
-            for y in range(N_CELLS_VERTICAL):
-                cell = self.cells[x][y]
-
-                # Check for rules here
-                # Any live cell with two or three live neighbours survives.
-                # Any dead cell with three live neighbours becomes a live cell.
-                # All other live cells die in the next generation.
-                # All other dead cells stay dead.
-                if cell.is_alive:
-                    if cell.num_neighbors != 2 and cell.num_neighbors != 3:
-                        cell.is_alive = False
-                else:
-                    if cell.num_neighbors == 3:
-                        cell.is_alive = True
-                pygame.draw.rect(self.display, cell.color, cell.rect)
-
-    def map_editor(self):
-        self.display.fill(SCREEN_BACKGROUND.RGB)
-        # self.check_mouse_click()
-        for x in range(N_CELLS_HORIZONTAL):
-            for y in range(N_CELLS_VERTICAL):
-                cell = self.cells[x][y]
-                pygame.draw.rect(self.display, cell.color, cell.rect)
-
-    def pause(self):
-        if self.game_state != "paused":
-            self.game_state = "paused"
-        self.draw_text("PAUSED", self.fonts["medium"], BASIC_COLORS["WHITE"].RGB,
-                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
-        self.draw_text("Click p to unpause", self.fonts["standard"],
-                       BASIC_COLORS["WHITE"].RGB,
-                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 20)))
-
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 10)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_todo1",
-                                   "Save current state TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
-
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 10)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_todo2",
-                                   "Save starting state TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
-
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_main_menu",
-                                   "Back to Main Menu", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
-
+    # Pygame/Info methods
     def draw_text(self, text, font, color, pos, center=True):
         text_obj = font.render(text, True, color)
         text_rect = text_obj.get_rect()
