@@ -33,6 +33,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.START_GAME_KEY, self.PAUSE_KEY, self.QUIT_KEY = False, False, False
         self.fonts = {
+            "small": pygame.font.SysFont("Arial", FONT_SIZE["SMALL"]),
             "standard": pygame.font.SysFont("Arial", FONT_SIZE["NORMAL"]),
             "medium": pygame.font.SysFont("Arial", FONT_SIZE["MEDIUM"]),
             "big": pygame.font.SysFont("Arial", FONT_SIZE["BIG"])
