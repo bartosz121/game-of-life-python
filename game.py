@@ -31,7 +31,7 @@ class Game:
         self.fps = fps
         self.display = pygame.display.set_mode((self.screen_width, self.screen_height))
         self.clock = pygame.time.Clock()
-        self.PAUSE_KEY, self.QUIT_KEY = False, False
+        self.START_GAME_KEY, self.PAUSE_KEY, self.QUIT_KEY = False, False, False
         self.fonts = {
             "standard": pygame.font.SysFont("Arial", FONT_SIZE["NORMAL"]),
             "medium": pygame.font.SysFont("Arial", FONT_SIZE["MEDIUM"]),
@@ -106,6 +106,15 @@ class Game:
             self.game_state = "main_menu"
 
     @property
+    def START_GAME_KEY(self):
+        return self.START_GAME_KEY
+
+    @START_GAME_KEY.setter
+    def START_GAME_KEY(self, value):
+        if value:
+            self.game_state = "playing"
+
+    @property
     def PAUSE_KEY(self):
         return self.PAUSE_KEY
 
@@ -157,6 +166,8 @@ class Game:
                     self.PAUSE_KEY = True
                 if event.key == pygame.K_q:
                     self.QUIT_KEY = True
+                if event.key == pygame.K_s and self.game_state == "map_editor":
+                    self.START_GAME_KEY = True
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     self.check_mouse_click()
@@ -175,8 +186,8 @@ class Game:
                 self.create_clean_game_state(mode="random")
                 self.game_state = "playing"
             elif self.buttons["sg_map_editor"].collidepoint((mx, my)):
-                # TODO map editor
-                self.game_state = "main_menu"
+                self.create_cells()
+                self.game_state = "map_editor"
             elif self.buttons["sg_back"].collidepoint((mx, my)):
                 self.game_state = "main_menu"
         elif self.game_state == "paused":
@@ -194,6 +205,14 @@ class Game:
                 self.game_state = "main_menu"
             elif self.buttons["s_back"].collidepoint((mx, my)):
                 self.game_state = "main_menu"
+        elif self.game_state == "map_editor":
+            for x in range(N_CELLS_HORIZONTAL):
+                for y in range(N_CELLS_VERTICAL):
+                    cell = self.cells[x][y]
+                    if cell.rect.collidepoint((mx, my)):
+                        # 'not cell.is_alive' => logical negation
+                        # (True -> False // False -> True)
+                        cell.is_alive = not cell.is_alive
 
     def main_menu(self):
         if self._game_state != "main_menu":
@@ -350,7 +369,12 @@ class Game:
                 pygame.draw.rect(self.display, cell.color, cell.rect)
 
     def map_editor(self):
-        pass
+        self.display.fill(SCREEN_BACKGROUND.RGB)
+        # self.check_mouse_click()
+        for x in range(N_CELLS_HORIZONTAL):
+            for y in range(N_CELLS_VERTICAL):
+                cell = self.cells[x][y]
+                pygame.draw.rect(self.display, cell.color, cell.rect)
 
     def pause(self):
         if self.game_state != "paused":
@@ -393,7 +417,7 @@ class Game:
         self.draw_text(text, font, text_color, pos)
 
     def reset_keys(self):
-        self.PAUSE_KEY, self.QUIT_KEY = False, False
+        self.START_GAME_KEY, self.PAUSE_KEY, self.QUIT_KEY = False, False, False
 
     def get_game_info(self):
         print(f"==============GAME=OF=LIFE===============\n"
