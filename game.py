@@ -163,7 +163,7 @@ class Game:
                 self.running = False
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
+                if event.key == pygame.K_ESCAPE:
                     self.PAUSE_KEY = True
                 if event.key == pygame.K_q:
                     self.QUIT_KEY = True
@@ -321,7 +321,7 @@ class Game:
     def pause(self):
         self.draw_text("PAUSED", self.fonts["medium"], BASIC_COLORS["WHITE"].RGB,
                        (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
-        self.draw_text("Click p to unpause", self.fonts["small"],
+        self.draw_text("Click ESC to unpause", self.fonts["small"],
                        BASIC_COLORS["WHITE"].RGB,
                        (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 20)))
 
