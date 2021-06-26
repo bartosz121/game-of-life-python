@@ -1,8 +1,9 @@
 import random
 import pygame
 from cell import Cell
-from settings import FONT_SIZE, UI_SCALE, N_CELLS_VERTICAL, N_CELLS_HORIZONTAL,\
-    SCREEN_BACKGROUND, BASIC_COLORS, CELL_WIDTH, CELL_HEIGHT, N_CELLS, CELL_DEFAULT_COLOR
+from settings import DISPLAY_STATISTICS, FONT_SIZE, UI_SCALE, N_CELLS_VERTICAL,\
+    N_CELLS_HORIZONTAL, SCREEN_BACKGROUND, BASIC_COLORS, CELL_WIDTH, CELL_HEIGHT,\
+    N_CELLS, CELL_DEFAULT_COLOR
 
 
 class Foo:
@@ -47,7 +48,11 @@ class Game:
         self.buttons = {}
         self.cells = {row: [] for row in range(N_CELLS_HORIZONTAL)}
         self.starting_state = None
-        self.alive_cells = 0
+
+        self.statistics = {
+            "alive_cells": 0,
+            "generation": 0,
+        }
 
         self.create_cells()
         self.get_game_info()
@@ -138,7 +143,7 @@ class Game:
         if value:
             pygame.quit()
 
-    def _get_fps(self):
+    def get_fps(self):
         return str(int(self.clock.get_fps()))
 
     def game_loop(self):
@@ -150,8 +155,11 @@ class Game:
                 self.clock.tick(60)
             self.reset_keys()
             self.run_state()
-            self.draw_text(self._get_fps(), self.fonts["standard"],
-            BASIC_COLORS["WHITE"].RGB, (10, 0), center=False)
+
+            if DISPLAY_STATISTICS and\
+                    self.game_state == "playing" or self.game_state == "map_editor":
+                self.display_game_info()
+
             pygame.display.update()
 
             # print(pygame.mouse.get_pos())
@@ -222,6 +230,7 @@ class Game:
                         # 'not cell.is_alive' => logical negation
                         # (True -> False // False -> True)
                         cell.is_alive = not cell.is_alive
+                        self.update_alive_cells_statistic(cell)
 
     # Game modes
     def main_menu(self):
@@ -307,10 +316,17 @@ class Game:
                 if cell.is_alive:
                     if cell.num_neighbors != 2 and cell.num_neighbors != 3:
                         cell.is_alive = False
+                        self.statistics["alive_cells"] -= 1
                 else:
                     if cell.num_neighbors == 3:
                         cell.is_alive = True
+                        self.statistics["alive_cells"] += 1
                 pygame.draw.rect(self.display, cell.color, cell.rect)
+
+        self.update_generation_statistic()
+        # print(f"STATISTICS:\n"
+        #       f"\tGENERATION: {self.statistics['generation']}\n"
+        #       f"\tALIVE CELLS: {self.statistics['alive_cells']}")
 
     def map_editor(self):
         self.display.fill(SCREEN_BACKGROUND.RGB)
@@ -394,15 +410,35 @@ class Game:
                 self.cells[x].append(Cell(x * CELL_WIDTH, y * CELL_HEIGHT))
 
     def set_alive_random_cells(self):
+        self.reset_statistics()
+        self.set_all_cells_dead()
         for i in range((N_CELLS // 100) * 95):
-            self.cells[random.randint(0, N_CELLS_HORIZONTAL - 1)][
-                random.randint(0, N_CELLS_VERTICAL - 1)].is_alive = True
+            pos = (random.randint(0, N_CELLS_HORIZONTAL - 1),
+                   random.randint(0, N_CELLS_VERTICAL - 1))
+            cell = self.cells[pos[0]][pos[1]]
+            if not cell.is_alive:
+                self.cells[pos[0]][pos[1]].is_alive = True
+                self.update_alive_cells_statistic(cell)
 
     def set_all_cells_dead(self):
+        self.reset_statistics()
         for x in range(N_CELLS_HORIZONTAL):
             for y in range(N_CELLS_VERTICAL):
                 cell = self.cells[x][y]
                 cell.is_alive = False
+
+    def update_alive_cells_statistic(self, cell):
+        if cell.is_alive:
+            self.statistics["alive_cells"] += 1
+        else:
+            self.statistics["alive_cells"] -= 1
+
+    def update_generation_statistic(self):
+        self.statistics["generation"] += 1
+
+    def reset_statistics(self):
+        self.statistics["alive_cells"] = 0
+        self.statistics["generation"] = 0
 
     # Pygame/Info methods
     def draw_text(self, text, font, color, pos, center=True):
@@ -423,6 +459,16 @@ class Game:
     def draw_button_with_text(self, pos, size, btn_color, btn_name, text, font, text_color):
         self.draw_button(pos, size, btn_color, btn_name)
         self.draw_text(text, font, text_color, pos)
+
+    def display_game_info(self):
+        self.draw_text(self.get_fps(), self.fonts["standard"],
+                       BASIC_COLORS["WHITE"].RGB, (10, 0), center=False)
+        self.draw_text(f"Generation: {self.statistics['generation']}",
+                       self.fonts["standard"], BASIC_COLORS["WHITE"].RGB,
+                       (10, self.screen_height - 100), center=False)
+        self.draw_text(f"Alive cells: {self.statistics['alive_cells']}",
+                       self.fonts["standard"], BASIC_COLORS["WHITE"].RGB,
+                       (10, self.screen_height - 50), center=False)
 
     def reset_keys(self):
         self.START_GAME_KEY, self.PAUSE_KEY, self.QUIT_KEY = False, False, False
