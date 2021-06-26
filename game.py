@@ -33,6 +33,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.START_GAME_KEY, self.PAUSE_KEY, self.QUIT_KEY = False, False, False
         self.fonts = {
+            "small": pygame.font.SysFont("Arial", FONT_SIZE["SMALL"]),
             "standard": pygame.font.SysFont("Arial", FONT_SIZE["NORMAL"]),
             "medium": pygame.font.SysFont("Arial", FONT_SIZE["MEDIUM"]),
             "big": pygame.font.SysFont("Arial", FONT_SIZE["BIG"])
@@ -162,7 +163,7 @@ class Game:
                 self.running = False
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
+                if event.key == pygame.K_ESCAPE:
                     self.PAUSE_KEY = True
                 if event.key == pygame.K_q:
                     self.QUIT_KEY = True
@@ -191,10 +192,16 @@ class Game:
             elif self.buttons["sg_back"].collidepoint((mx, my)):
                 self.game_state = "main_menu"
         elif self.game_state == "paused":
-            if self.buttons["p_todo1"].collidepoint((mx, my)):
+            if self.buttons["p_save_current"].collidepoint((mx, my)):
                 self.game_state = "main_menu"
-            elif self.buttons["p_todo2"].collidepoint((mx, my)):
+            # TODO make a way to save starting state
+            # TODO check if map editor current state works properly(setting the self.cells)
+            elif self.buttons["p_edit_current"].collidepoint((mx, my)):
+                self.game_state = "map_editor"
+            elif self.buttons["p_save_start"].collidepoint((mx, my)):
                 self.game_state = "main_menu"
+            elif self.buttons["p_edit_start"].collidepoint((mx, my)):
+                self.game_state = "map_editor"
             elif self.buttons["p_main_menu"].collidepoint((mx, my)):
                 self.game_state = "main_menu"
         elif self.game_state == "settings":
@@ -314,21 +321,29 @@ class Game:
     def pause(self):
         self.draw_text("PAUSED", self.fonts["medium"], BASIC_COLORS["WHITE"].RGB,
                        (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
-        self.draw_text("Click p to unpause", self.fonts["standard"],
+        self.draw_text("Click ESC to unpause", self.fonts["small"],
                        BASIC_COLORS["WHITE"].RGB,
                        (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 20)))
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 10)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_todo1",
-                                   "Save current state TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 12)),
+                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_save_current",
+                                   "Save current state", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 10)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_todo2",
-                                   "Save starting state TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 4)),
+                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_edit_current",
+                                   "Edit current state", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 4)),
+                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_save_start",
+                                   "Save starting state", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 12)),
+                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_edit_start",
+                                   "Edit starting state", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
 
         self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_main_menu",
-                                   "Back to Main Menu", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_main_menu",
+                                   "Back to Main Menu", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
 
     # 'Playing' mode methods
     def count_neighbors(self):
