@@ -47,7 +47,11 @@ class Game:
         self.buttons = {}
         self.cells = {row: [] for row in range(N_CELLS_HORIZONTAL)}
         self.starting_state = None
-        self.alive_cells = 0
+
+        self.statistics = {
+            "alive_cells": 0,
+            "generation": 0,
+        }
 
         self.create_cells()
         self.get_game_info()
@@ -222,6 +226,7 @@ class Game:
                         # 'not cell.is_alive' => logical negation
                         # (True -> False // False -> True)
                         cell.is_alive = not cell.is_alive
+                        self.update_alive_cells_statistic(cell)
 
     # Game modes
     def main_menu(self):
@@ -307,10 +312,13 @@ class Game:
                 if cell.is_alive:
                     if cell.num_neighbors != 2 and cell.num_neighbors != 3:
                         cell.is_alive = False
+                        self.statistics["alive_cells"] -= 1
                 else:
                     if cell.num_neighbors == 3:
                         cell.is_alive = True
+                        self.statistics["alive_cells"] += 1
                 pygame.draw.rect(self.display, cell.color, cell.rect)
+
 
     def map_editor(self):
         self.display.fill(SCREEN_BACKGROUND.RGB)
@@ -394,15 +402,32 @@ class Game:
                 self.cells[x].append(Cell(x * CELL_WIDTH, y * CELL_HEIGHT))
 
     def set_alive_random_cells(self):
+        self.reset_statistics()
+        self.set_all_cells_dead()
         for i in range((N_CELLS // 100) * 95):
-            self.cells[random.randint(0, N_CELLS_HORIZONTAL - 1)][
-                random.randint(0, N_CELLS_VERTICAL - 1)].is_alive = True
+            pos = (random.randint(0, N_CELLS_HORIZONTAL - 1),
+                   random.randint(0, N_CELLS_VERTICAL - 1))
+            cell = self.cells[pos[0]][pos[1]]
+            if not cell.is_alive:
+                self.cells[pos[0]][pos[1]].is_alive = True
+                self.update_alive_cells_statistic(cell)
 
     def set_all_cells_dead(self):
+        self.reset_statistics()
         for x in range(N_CELLS_HORIZONTAL):
             for y in range(N_CELLS_VERTICAL):
                 cell = self.cells[x][y]
                 cell.is_alive = False
+
+    def update_alive_cells_statistic(self, cell):
+        if cell.is_alive:
+            self.statistics["alive_cells"] += 1
+        else:
+            self.statistics["alive_cells"] -= 1
+
+    def reset_statistics(self):
+        self.statistics["alive_cells"] = 0
+        self.statistics["generation"] = 0
 
     # Pygame/Info methods
     def draw_text(self, text, font, color, pos, center=True):
