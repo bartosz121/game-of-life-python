@@ -1,8 +1,9 @@
 import random
 import pygame
 from cell import Cell
-from settings import FONT_SIZE, UI_SCALE, N_CELLS_VERTICAL, N_CELLS_HORIZONTAL,\
-    SCREEN_BACKGROUND, BASIC_COLORS, CELL_WIDTH, CELL_HEIGHT, N_CELLS, CELL_DEFAULT_COLOR
+from settings import DISPLAY_STATISTICS, FONT_SIZE, UI_SCALE, N_CELLS_VERTICAL,\
+    N_CELLS_HORIZONTAL, SCREEN_BACKGROUND, BASIC_COLORS, CELL_WIDTH, CELL_HEIGHT,\
+    N_CELLS, CELL_DEFAULT_COLOR
 
 
 class Foo:
@@ -142,7 +143,7 @@ class Game:
         if value:
             pygame.quit()
 
-    def _get_fps(self):
+    def get_fps(self):
         return str(int(self.clock.get_fps()))
 
     def game_loop(self):
@@ -154,8 +155,11 @@ class Game:
                 self.clock.tick(60)
             self.reset_keys()
             self.run_state()
-            self.draw_text(self._get_fps(), self.fonts["standard"],
-            BASIC_COLORS["WHITE"].RGB, (10, 0), center=False)
+
+            if DISPLAY_STATISTICS and\
+                    self.game_state == "playing" or self.game_state == "map_editor":
+                self.display_game_info()
+
             pygame.display.update()
 
             # print(pygame.mouse.get_pos())
@@ -455,6 +459,16 @@ class Game:
     def draw_button_with_text(self, pos, size, btn_color, btn_name, text, font, text_color):
         self.draw_button(pos, size, btn_color, btn_name)
         self.draw_text(text, font, text_color, pos)
+
+    def display_game_info(self):
+        self.draw_text(self.get_fps(), self.fonts["standard"],
+                       BASIC_COLORS["WHITE"].RGB, (10, 0), center=False)
+        self.draw_text(f"Generation: {self.statistics['generation']}",
+                       self.fonts["standard"], BASIC_COLORS["WHITE"].RGB,
+                       (10, self.screen_height - 100), center=False)
+        self.draw_text(f"Alive cells: {self.statistics['alive_cells']}",
+                       self.fonts["standard"], BASIC_COLORS["WHITE"].RGB,
+                       (10, self.screen_height - 50), center=False)
 
     def reset_keys(self):
         self.START_GAME_KEY, self.PAUSE_KEY, self.QUIT_KEY = False, False, False
