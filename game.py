@@ -46,8 +46,10 @@ class Game:
         # s_ = settings
         self.buttons = {}
         self.cells = {row: [] for row in range(N_CELLS_HORIZONTAL)}
+        self.starting_state = None
         self.alive_cells = 0
 
+        self.create_cells()
         self.get_game_info()
         self.display.fill(SCREEN_BACKGROUND.RGB)
 
@@ -184,10 +186,10 @@ class Game:
                 pygame.quit()
         elif self.game_state == "start_game_menu":
             if self.buttons["sg_random"].collidepoint((mx, my)):
-                self.create_clean_game_state(mode="random")
+                self.set_alive_random_cells()
                 self.game_state = "playing"
             elif self.buttons["sg_map_editor"].collidepoint((mx, my)):
-                self.create_cells()
+                self.set_all_cells_dead()
                 self.game_state = "map_editor"
             elif self.buttons["sg_back"].collidepoint((mx, my)):
                 self.game_state = "main_menu"
@@ -396,12 +398,11 @@ class Game:
             self.cells[random.randint(0, N_CELLS_HORIZONTAL - 1)][
                 random.randint(0, N_CELLS_VERTICAL - 1)].is_alive = True
 
-    def create_clean_game_state(self, mode):
-        self.create_cells()
-        if mode == "random":
-            self.set_alive_random_cells()
-        else:
-            self.set_alive_random_cells()
+    def set_all_cells_dead(self):
+        for x in range(N_CELLS_HORIZONTAL):
+            for y in range(N_CELLS_VERTICAL):
+                cell = self.cells[x][y]
+                cell.is_alive = False
 
     # Pygame/Info methods
     def draw_text(self, text, font, color, pos, center=True):
