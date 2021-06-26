@@ -319,6 +319,10 @@ class Game:
                         self.statistics["alive_cells"] += 1
                 pygame.draw.rect(self.display, cell.color, cell.rect)
 
+        self.update_generation_statistic()
+        # print(f"STATISTICS:\n"
+        #       f"\tGENERATION: {self.statistics['generation']}\n"
+        #       f"\tALIVE CELLS: {self.statistics['alive_cells']}")
 
     def map_editor(self):
         self.display.fill(SCREEN_BACKGROUND.RGB)
@@ -424,6 +428,9 @@ class Game:
             self.statistics["alive_cells"] += 1
         else:
             self.statistics["alive_cells"] -= 1
+
+    def update_generation_statistic(self):
+        self.statistics["generation"] += 1
 
     def reset_statistics(self):
         self.statistics["alive_cells"] = 0
