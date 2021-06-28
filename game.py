@@ -6,19 +6,6 @@ from settings import DISPLAY_STATISTICS, FONT_SIZE, UI_SCALE, N_CELLS_VERTICAL,\
     N_CELLS, CELL_DEFAULT_COLOR
 
 
-class Foo:
-    def __init__(self, seed_val):
-        self.value = seed_val # call the setter
-
-    @property
-    def value(self):
-        return self._value
-
-    @value.setter
-    def value(self, value):
-        self._value = value
-
-
 class Game:
     def __init__(self, s_width, s_height, fps):
         pygame.init()
@@ -48,6 +35,7 @@ class Game:
         self.buttons = {}
         self.cells = {row: [] for row in range(N_CELLS_HORIZONTAL)}
         self.starting_state = None
+        self.structure_on_hold = None
 
         self.statistics = {
             "alive_cells": 0,
@@ -469,6 +457,22 @@ class Game:
         self.draw_text(f"Alive cells: {self.statistics['alive_cells']}",
                        self.fonts["standard"], BASIC_COLORS["WHITE"].RGB,
                        (10, self.screen_height - 50), center=False)
+
+    def draw_structure(self, structure):
+        start = structure.start_pos
+
+        # i = column counter
+        # j = row counter
+        for i, row in enumerate(structure.cells):
+            for j, struc_cell in enumerate(row):
+                try:
+                    cell = self.cells[start[0]+j][start[1]+i]
+                except (IndexError, KeyError):
+                    print()
+                    continue
+                cell.is_alive = struc_cell
+                if struc_cell:
+                    self.statistics["alive_cells"] += 1
 
     def reset_keys(self):
         self.START_GAME_KEY, self.PAUSE_KEY, self.QUIT_KEY = False, False, False
