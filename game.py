@@ -1,6 +1,7 @@
 import random
 import pygame
 from cell import Cell
+from structure import Structure
 from settings import DISPLAY_STATISTICS, FONT_SIZE, UI_SCALE, N_CELLS_VERTICAL,\
     N_CELLS_HORIZONTAL, SCREEN_BACKGROUND, BASIC_COLORS, CELL_WIDTH, CELL_HEIGHT,\
     N_CELLS, CELL_DEFAULT_COLOR
@@ -31,6 +32,7 @@ class Game:
         # mm_ = main_menu
         # sg_ = start_game
         # p_ = paused
+        # me_ = map editor menu
         # s_ = settings
         self.buttons = {}
         self.cells = {row: [] for row in range(N_CELLS_HORIZONTAL)}
@@ -92,6 +94,9 @@ class Game:
         elif value == "map_editor":
             self._game_state = value
             self.mode = self.map_editor
+        elif value == "map_editor_menu":
+            self._game_state = value
+            self.mode = self.map_editor_menu
         elif value == "settings":
             self._game_state = value
             self.mode = self.settings_menu
@@ -119,6 +124,10 @@ class Game:
         if value:
             if self.game_state == "playing":
                 self.game_state = "paused"
+            elif self.game_state == "map_editor":
+                self.game_state = "map_editor_menu"
+            elif self.game_state == "map_editor_menu":
+                self.game_state = "map_editor"
             elif self.game_state == "paused":
                 self.game_state = "playing"
 
@@ -201,6 +210,20 @@ class Game:
             elif self.buttons["p_edit_start"].collidepoint((mx, my)):
                 self.game_state = "map_editor"
             elif self.buttons["p_main_menu"].collidepoint((mx, my)):
+                self.game_state = "main_menu"
+        elif self.game_state == "map_editor_menu":
+            if self.buttons["me_save_current"].collidepoint((mx, my)):
+                self.game_state = "main_menu"
+            elif self.buttons["me_load_structure"].collidepoint((mx, my)):
+                file_path = filedialog.askopenfilename()
+                s = Structure.load_from_file(file_path)
+                self.structure_on_hold = s
+                self.game_state = "map_editor"
+            elif self.buttons["me_TODO"].collidepoint((mx, my)):
+                self.game_state = "main_menu"
+            elif self.buttons["me_TODO2"].collidepoint((mx, my)):
+                self.game_state = "map_editor"
+            elif self.buttons["me_main_menu"].collidepoint((mx, my)):
                 self.game_state = "main_menu"
         elif self.game_state == "settings":
             # TODO settings
@@ -349,6 +372,33 @@ class Game:
 
         self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
                                    (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_main_menu",
+                                   "Back to Main Menu", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+
+    def map_editor_menu(self):
+        self.draw_text("Click ESC to continue", self.fonts["small"], BASIC_COLORS["WHITE"].RGB,
+                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
+        self.draw_text("Click S to start game", self.fonts["small"],
+                       BASIC_COLORS["WHITE"].RGB,
+                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 20)))
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 12)),
+                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "me_save_current",
+                                   "Save current state", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 4)),
+                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "me_load_structure",
+                                   "Load structure from file", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 4)),
+                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "me_TODO",
+                                   "TODO", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 12)),
+                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "me_TODO2",
+                                   "TODO", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+
+        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
+                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "me_main_menu",
                                    "Back to Main Menu", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
 
     # 'Playing' mode methods
