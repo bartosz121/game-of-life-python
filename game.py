@@ -1,3 +1,5 @@
+import tkinter as tk
+from tkinter import filedialog
 import random
 import pygame
 from cell import Cell
@@ -10,6 +12,9 @@ from settings import DISPLAY_STATISTICS, FONT_SIZE, UI_SCALE, N_CELLS_VERTICAL,\
 class Game:
     def __init__(self, s_width, s_height, fps):
         pygame.init()
+        # tk for file dialog
+        root = tk.Tk()
+        root.withdraw()
         pygame.display.set_caption("Conway's Game of Life")
         self.running = True
         self.playing = False
@@ -238,10 +243,18 @@ class Game:
                 for y in range(N_CELLS_VERTICAL):
                     cell = self.cells[x][y]
                     if cell.rect.collidepoint((mx, my)):
-                        # 'not cell.is_alive' => logical negation
-                        # (True -> False // False -> True)
-                        cell.is_alive = not cell.is_alive
-                        self.update_alive_cells_statistic(cell)
+                        print(f"cell.rect.collidepoint: {cell}\n {x = } {y = }")
+                        if self.structure_on_hold:
+                            print(f"{self.structure_on_hold = }")
+                            self.structure_on_hold.start_pos = (x, y)
+                            print(f"{self.structure_on_hold = }")
+                            self.draw_structure(self.structure_on_hold)
+                            self.structure_on_hold = None
+                        else:
+                            # 'not cell.is_alive' => logical negation
+                            # (True -> False // False -> True)
+                            cell.is_alive = not cell.is_alive
+                            self.update_alive_cells_statistic(cell)
 
     # Game modes
     def main_menu(self):
