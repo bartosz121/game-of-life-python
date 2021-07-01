@@ -4,6 +4,7 @@ import random
 import pygame
 from cell import Cell
 from structure import Structure
+from structure_reader import StructureReader
 from settings import DISPLAY_STATISTICS, FONT_SIZE, UI_SCALE, N_CELLS_VERTICAL,\
     N_CELLS_HORIZONTAL, SCREEN_BACKGROUND, BASIC_COLORS, CELL_WIDTH, CELL_HEIGHT,\
     N_CELLS, CELL_DEFAULT_COLOR
@@ -221,7 +222,7 @@ class Game:
                 self.game_state = "main_menu"
             elif self.buttons["me_load_structure"].collidepoint((mx, my)):
                 file_path = filedialog.askopenfilename()
-                s = Structure.load_from_file(file_path)
+                s = StructureReader.load_from_file(file_path)
                 self.structure_on_hold = s
                 self.game_state = "map_editor"
             elif self.buttons["me_TODO"].collidepoint((mx, my)):
@@ -243,11 +244,8 @@ class Game:
                 for y in range(N_CELLS_VERTICAL):
                     cell = self.cells[x][y]
                     if cell.rect.collidepoint((mx, my)):
-                        print(f"cell.rect.collidepoint: {cell}\n {x = } {y = }")
                         if self.structure_on_hold:
-                            print(f"{self.structure_on_hold = }")
                             self.structure_on_hold.start_pos = (x, y)
-                            print(f"{self.structure_on_hold = }")
                             self.draw_structure(self.structure_on_hold)
                             self.structure_on_hold = None
                         else:
@@ -531,7 +529,6 @@ class Game:
                 try:
                     cell = self.cells[start[0]+j][start[1]+i]
                 except (IndexError, KeyError):
-                    print()
                     continue
                 cell.is_alive = struc_cell
                 if struc_cell:
