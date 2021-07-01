@@ -357,6 +357,11 @@ class Game:
             for y in range(N_CELLS_VERTICAL):
                 cell = self.cells[x][y]
                 pygame.draw.rect(self.display, cell.color, cell.rect)
+        if self.structure_on_hold:
+            size = (self.structure_on_hold.end_pos[0]*CELL_WIDTH,
+                    self.structure_on_hold.end_pos[1]*CELL_HEIGHT)
+            structure_rect = pygame.Rect(pygame.mouse.get_pos(), size)
+            pygame.draw.rect(self.display, (255, 0, 0), structure_rect)
 
     def pause(self):
         self.draw_text("PAUSED", self.fonts["medium"], BASIC_COLORS["WHITE"].RGB,
