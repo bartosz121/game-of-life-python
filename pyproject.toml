@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "game-of-life-pygame"
+version = "0.1.0"
+description = ""
+authors = ["bartosz121 <bmagiera121@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pygame = "^2.1.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
