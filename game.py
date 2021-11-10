@@ -5,9 +5,19 @@ import pygame
 from cell import Cell
 from structure import Structure
 from structure_reader import StructureReader
-from settings import DISPLAY_STATISTICS, FONT_SIZE, UI_SCALE, N_CELLS_VERTICAL,\
-    N_CELLS_HORIZONTAL, SCREEN_BACKGROUND, BASIC_COLORS, CELL_WIDTH, CELL_HEIGHT,\
-    N_CELLS, CELL_DEFAULT_COLOR
+from settings import (
+    DISPLAY_STATISTICS,
+    FONT_SIZE,
+    UI_SCALE,
+    N_CELLS_VERTICAL,
+    N_CELLS_HORIZONTAL,
+    SCREEN_BACKGROUND,
+    BASIC_COLORS,
+    CELL_WIDTH,
+    CELL_HEIGHT,
+    N_CELLS,
+    CELL_DEFAULT_COLOR,
+)
 
 
 class Game:
@@ -31,7 +41,7 @@ class Game:
             "small": pygame.font.SysFont("Arial", FONT_SIZE["SMALL"]),
             "standard": pygame.font.SysFont("Arial", FONT_SIZE["NORMAL"]),
             "medium": pygame.font.SysFont("Arial", FONT_SIZE["MEDIUM"]),
-            "big": pygame.font.SysFont("Arial", FONT_SIZE["BIG"])
+            "big": pygame.font.SysFont("Arial", FONT_SIZE["BIG"]),
         }
 
         # Buttons prefix:
@@ -52,7 +62,7 @@ class Game:
 
         self.create_cells()
         self.get_game_info()
-        self.display.fill(SCREEN_BACKGROUND.RGB)
+        self.display.fill(SCREEN_BACKGROUND.rgb)
 
     @property
     def screen_width(self):
@@ -159,8 +169,11 @@ class Game:
             self.reset_keys()
             self.run_state()
 
-            if DISPLAY_STATISTICS and\
-                    self.game_state == "playing" or self.game_state == "map_editor":
+            if (
+                DISPLAY_STATISTICS
+                and self.game_state == "playing"
+                or self.game_state == "map_editor"
+            ):
                 self.display_game_info()
 
             pygame.display.update()
@@ -256,55 +269,157 @@ class Game:
 
     # Game modes
     def main_menu(self):
-        self.display.fill(SCREEN_BACKGROUND.RGB)
-        self.draw_text("Game of Life", self.fonts["medium"], BASIC_COLORS["BLACK"].RGB,
-                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
+        self.display.fill(SCREEN_BACKGROUND.rgb)
+        self.draw_text(
+            "Game of Life",
+            self.fonts["medium"],
+            BASIC_COLORS["BLACK"].rgb,
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 30),
+            ),
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 10)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "mm_start_game",
-                                   "Start game", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 10),
+            ),
+            (140 * UI_SCALE, 30 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "mm_start_game",
+            "Start game",
+            self.fonts["standard"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 10)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "mm_settings",
-                                   "Settings", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 + (self.screen_height // 100 * 10),
+            ),
+            (140 * UI_SCALE, 30 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "mm_settings",
+            "Settings",
+            self.fonts["standard"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "mm_quit",
-                                   "Quit", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 + (self.screen_height // 100 * 30),
+            ),
+            (140 * UI_SCALE, 30 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "mm_quit",
+            "Quit",
+            self.fonts["standard"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
     def start_game_menu(self):
-        self.display.fill(SCREEN_BACKGROUND.RGB)
-        self.draw_text("Start Game", self.fonts["medium"], BASIC_COLORS["BLACK"].RGB,
-                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
+        self.display.fill(SCREEN_BACKGROUND.rgb)
+        self.draw_text(
+            "Start Game",
+            self.fonts["medium"],
+            BASIC_COLORS["BLACK"].rgb,
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 30),
+            ),
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 10)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "sg_random",
-                                   "Random alive cells", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 10),
+            ),
+            (140 * UI_SCALE, 30 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "sg_random",
+            "Random alive cells",
+            self.fonts["standard"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 10)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "sg_map_editor",
-                                   "Map editor", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 + (self.screen_height // 100 * 10),
+            ),
+            (140 * UI_SCALE, 30 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "sg_map_editor",
+            "Map editor",
+            self.fonts["standard"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "sg_back",
-                                   "Go back", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 + (self.screen_height // 100 * 30),
+            ),
+            (140 * UI_SCALE, 30 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "sg_back",
+            "Go back",
+            self.fonts["standard"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
     def settings_menu(self):
-        self.display.fill(SCREEN_BACKGROUND.RGB)
-        self.draw_text("Settings", self.fonts["medium"], BASIC_COLORS["BLACK"].RGB,
-                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
+        self.display.fill(SCREEN_BACKGROUND.rgb)
+        self.draw_text(
+            "Settings",
+            self.fonts["medium"],
+            BASIC_COLORS["BLACK"].rgb,
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 30),
+            ),
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 10)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "s_todo1",
-                                   "TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 10),
+            ),
+            (140 * UI_SCALE, 30 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "s_todo1",
+            "TODO",
+            self.fonts["standard"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 10)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "s_todo2",
-                                   "TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 + (self.screen_height // 100 * 10),
+            ),
+            (140 * UI_SCALE, 30 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "s_todo2",
+            "TODO",
+            self.fonts["standard"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
-                                   (140*UI_SCALE, 30*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "s_back",
-                                   "TODO", self.fonts["standard"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 + (self.screen_height // 100 * 30),
+            ),
+            (140 * UI_SCALE, 30 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "s_back",
+            "TODO",
+            self.fonts["standard"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
     def play(self):
         # The R-pentomino
@@ -351,71 +466,189 @@ class Game:
         #       f"\tALIVE CELLS: {self.statistics['alive_cells']}")
 
     def map_editor(self):
-        self.display.fill(SCREEN_BACKGROUND.RGB)
+        self.display.fill(SCREEN_BACKGROUND.rgb)
         # self.check_mouse_click()
         for x in range(N_CELLS_HORIZONTAL):
             for y in range(N_CELLS_VERTICAL):
                 cell = self.cells[x][y]
                 pygame.draw.rect(self.display, cell.color, cell.rect)
         if self.structure_on_hold:
-            size = (self.structure_on_hold.end_pos[0]*CELL_WIDTH,
-                    self.structure_on_hold.end_pos[1]*CELL_HEIGHT)
+            size = (
+                self.structure_on_hold.end_pos[0] * CELL_WIDTH,
+                self.structure_on_hold.end_pos[1] * CELL_HEIGHT,
+            )
             structure_rect = pygame.Rect(pygame.mouse.get_pos(), size)
             pygame.draw.rect(self.display, (255, 0, 0), structure_rect)
 
     def pause(self):
-        self.draw_text("PAUSED", self.fonts["medium"], BASIC_COLORS["WHITE"].RGB,
-                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
-        self.draw_text("Click ESC to unpause", self.fonts["small"],
-                       BASIC_COLORS["WHITE"].RGB,
-                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 20)))
+        self.draw_text(
+            "PAUSED",
+            self.fonts["medium"],
+            BASIC_COLORS["WHITE"].rgb,
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 30),
+            ),
+        )
+        self.draw_text(
+            "Click ESC to unpause",
+            self.fonts["small"],
+            BASIC_COLORS["WHITE"].rgb,
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 20),
+            ),
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 12)),
-                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_save_current",
-                                   "Save current state", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 12),
+            ),
+            (80 * UI_SCALE, 15 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "p_save_current",
+            "Save current state",
+            self.fonts["small"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 4)),
-                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_edit_current",
-                                   "Edit current state", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 4),
+            ),
+            (80 * UI_SCALE, 15 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "p_edit_current",
+            "Edit current state",
+            self.fonts["small"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 4)),
-                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_save_start",
-                                   "Save starting state", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 + (self.screen_height // 100 * 4),
+            ),
+            (80 * UI_SCALE, 15 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "p_save_start",
+            "Save starting state",
+            self.fonts["small"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 12)),
-                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_edit_start",
-                                   "Edit starting state", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 + (self.screen_height // 100 * 12),
+            ),
+            (80 * UI_SCALE, 15 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "p_edit_start",
+            "Edit starting state",
+            self.fonts["small"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
-                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "p_main_menu",
-                                   "Back to Main Menu", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 + (self.screen_height // 100 * 30),
+            ),
+            (80 * UI_SCALE, 15 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "p_main_menu",
+            "Back to Main Menu",
+            self.fonts["small"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
     def map_editor_menu(self):
-        self.draw_text("Click ESC to continue", self.fonts["small"], BASIC_COLORS["WHITE"].RGB,
-                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 30)))
-        self.draw_text("Click S to start game", self.fonts["small"],
-                       BASIC_COLORS["WHITE"].RGB,
-                       (self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 20)))
+        self.draw_text(
+            "Click ESC to continue",
+            self.fonts["small"],
+            BASIC_COLORS["WHITE"].rgb,
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 30),
+            ),
+        )
+        self.draw_text(
+            "Click S to start game",
+            self.fonts["small"],
+            BASIC_COLORS["WHITE"].rgb,
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 20),
+            ),
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 12)),
-                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "me_save_current",
-                                   "Save current state", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 12),
+            ),
+            (80 * UI_SCALE, 15 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "me_save_current",
+            "Save current state",
+            self.fonts["small"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 - (self.screen_height // 100 * 4)),
-                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "me_load_structure",
-                                   "Load structure from file", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 - (self.screen_height // 100 * 4),
+            ),
+            (80 * UI_SCALE, 15 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "me_load_structure",
+            "Load structure from file",
+            self.fonts["small"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 4)),
-                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "me_TODO",
-                                   "TODO", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 + (self.screen_height // 100 * 4),
+            ),
+            (80 * UI_SCALE, 15 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "me_TODO",
+            "TODO",
+            self.fonts["small"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 12)),
-                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "me_TODO2",
-                                   "TODO", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 + (self.screen_height // 100 * 12),
+            ),
+            (80 * UI_SCALE, 15 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "me_TODO2",
+            "TODO",
+            self.fonts["small"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
-        self.draw_button_with_text((self.screen_width // 2, self.screen_height // 2 + (self.screen_height // 100 * 30)),
-                                   (80*UI_SCALE, 15*UI_SCALE), BASIC_COLORS["WHITE"].RGB, "me_main_menu",
-                                   "Back to Main Menu", self.fonts["small"], BASIC_COLORS["BLACK"].RGB)
+        self.draw_button_with_text(
+            (
+                self.screen_width // 2,
+                self.screen_height // 2 + (self.screen_height // 100 * 30),
+            ),
+            (80 * UI_SCALE, 15 * UI_SCALE),
+            BASIC_COLORS["WHITE"].rgb,
+            "me_main_menu",
+            "Back to Main Menu",
+            self.fonts["small"],
+            BASIC_COLORS["BLACK"].rgb,
+        )
 
     # 'Playing' mode methods
     def count_neighbors(self):
@@ -467,8 +700,10 @@ class Game:
         self.reset_statistics()
         self.set_all_cells_dead()
         for i in range((N_CELLS // 100) * 95):
-            pos = (random.randint(0, N_CELLS_HORIZONTAL - 1),
-                   random.randint(0, N_CELLS_VERTICAL - 1))
+            pos = (
+                random.randint(0, N_CELLS_HORIZONTAL - 1),
+                random.randint(0, N_CELLS_VERTICAL - 1),
+            )
             cell = self.cells[pos[0]][pos[1]]
             if not cell.is_alive:
                 self.cells[pos[0]][pos[1]].is_alive = True
@@ -507,22 +742,37 @@ class Game:
     def draw_button(self, pos, size, color, name):
         btn = pygame.Rect(pos, size)
         self.buttons[name] = btn
-        btn.topleft = (pos[0]-size[0]//2, pos[1]-size[1]//2)
+        btn.topleft = (pos[0] - size[0] // 2, pos[1] - size[1] // 2)
         pygame.draw.rect(self.display, color, btn)
 
-    def draw_button_with_text(self, pos, size, btn_color, btn_name, text, font, text_color):
+    def draw_button_with_text(
+        self, pos, size, btn_color, btn_name, text, font, text_color
+    ):
         self.draw_button(pos, size, btn_color, btn_name)
         self.draw_text(text, font, text_color, pos)
 
     def display_game_info(self):
-        self.draw_text(self.get_fps(), self.fonts["standard"],
-                       BASIC_COLORS["WHITE"].RGB, (10, 0), center=False)
-        self.draw_text(f"Generation: {self.statistics['generation']}",
-                       self.fonts["standard"], BASIC_COLORS["WHITE"].RGB,
-                       (10, self.screen_height - 100), center=False)
-        self.draw_text(f"Alive cells: {self.statistics['alive_cells']}",
-                       self.fonts["standard"], BASIC_COLORS["WHITE"].RGB,
-                       (10, self.screen_height - 50), center=False)
+        self.draw_text(
+            self.get_fps(),
+            self.fonts["standard"],
+            BASIC_COLORS["WHITE"].rgb,
+            (10, 0),
+            center=False,
+        )
+        self.draw_text(
+            f"Generation: {self.statistics['generation']}",
+            self.fonts["standard"],
+            BASIC_COLORS["WHITE"].rgb,
+            (10, self.screen_height - 100),
+            center=False,
+        )
+        self.draw_text(
+            f"Alive cells: {self.statistics['alive_cells']}",
+            self.fonts["standard"],
+            BASIC_COLORS["WHITE"].rgb,
+            (10, self.screen_height - 50),
+            center=False,
+        )
 
     def draw_structure(self, structure):
         start = structure.start_pos
@@ -532,7 +782,7 @@ class Game:
         for i, row in enumerate(structure.cells):
             for j, struc_cell in enumerate(row):
                 try:
-                    cell = self.cells[start[0]+j][start[1]+i]
+                    cell = self.cells[start[0] + j][start[1] + i]
                 except (IndexError, KeyError):
                     continue
                 cell.is_alive = struc_cell
@@ -543,15 +793,17 @@ class Game:
         self.START_GAME_KEY, self.PAUSE_KEY, self.QUIT_KEY = False, False, False
 
     def get_game_info(self):
-        print(f"==============GAME=OF=LIFE===============\n"
-              f"SCREEN:\n"
-              f"\t{self.screen_width}x{self.screen_height}\n"
-              f"FPS CAP:\n"
-              f"\t{self.fps}\n"
-              f"CELL:\n"
-              f"\tSIZE: {CELL_WIDTH}x{CELL_HEIGHT}\n"
-              f"\tCOLOR: {CELL_DEFAULT_COLOR}\n"
-              f"\tCELLS PER ROW: {N_CELLS_HORIZONTAL}\n"
-              f"\tCELLS PER COL: {N_CELLS_VERTICAL}\n"
-              f"\tN: {N_CELLS}\n"
-              f"========================================")
+        print(
+            f"==============GAME=OF=LIFE===============\n"
+            f"SCREEN:\n"
+            f"\t{self.screen_width}x{self.screen_height}\n"
+            f"FPS CAP:\n"
+            f"\t{self.fps}\n"
+            f"CELL:\n"
+            f"\tSIZE: {CELL_WIDTH}x{CELL_HEIGHT}\n"
+            f"\tCOLOR: {CELL_DEFAULT_COLOR}\n"
+            f"\tCELLS PER ROW: {N_CELLS_HORIZONTAL}\n"
+            f"\tCELLS PER COL: {N_CELLS_VERTICAL}\n"
+            f"\tN: {N_CELLS}\n"
+            f"========================================"
+        )

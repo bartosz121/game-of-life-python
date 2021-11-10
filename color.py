@@ -1,9 +1,11 @@
-class Color:
-    def __init__(self, r, g ,b):
-        self._r = r
-        self._g = g
-        self._b = b
-        self.RGB = (self._r, self._g, self._b)
+from typing import NamedTuple
 
-    def __repr__(self):
-        return f"{self.RGB}"
+
+class Color(NamedTuple):
+    r: int
+    g: int
+    b: int
+
+    @property
+    def rgb(self) -> tuple[int, int, int]:
+        return self.r, self.g, self.b

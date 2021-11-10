@@ -1,13 +1,19 @@
 from pygame import Rect
 from color import Color
-from settings import BASIC_COLORS, CELL_DEFAULT_COLOR, CELL_WIDTH, CELL_HEIGHT, SCREEN_BACKGROUND
+from settings import (
+    BASIC_COLORS,
+    CELL_DEFAULT_COLOR,
+    CELL_WIDTH,
+    CELL_HEIGHT,
+    SCREEN_BACKGROUND,
+)
 
 
 class Cell:
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self._color = CELL_DEFAULT_COLOR.RGB
+        self._color = CELL_DEFAULT_COLOR.rgb
         self._is_alive = False
         self._num_neighbors = 0
         # pygame.Rect(left, top, width, height)
@@ -15,12 +21,14 @@ class Cell:
         self.rect = Rect(x, y, CELL_WIDTH, CELL_HEIGHT)
 
     def __repr__(self):
-        return f"============================\n" \
-               f"\tCell({self.x}, {self.y})\n" \
-               f"\tisAlive: {self.is_alive}\n" \
-               f"\tNeighbors(Alive): {self.num_neighbors}\n" \
-               f"\tColor: {self.color}\n" \
-               f"============================"
+        return (
+            f"============================\n"
+            f"\tCell({self.x}, {self.y})\n"
+            f"\tisAlive: {self.is_alive}\n"
+            f"\tNeighbors(Alive): {self.num_neighbors}\n"
+            f"\tColor: {self.color}\n"
+            f"============================"
+        )
 
     def check_position(self):
         return f"({self.x}, {self.y})"
@@ -52,4 +60,4 @@ class Cell:
 
     @color.setter
     def color(self, new_color: Color):
-        self._color = new_color.RGB
+        self._color = new_color.rgb
