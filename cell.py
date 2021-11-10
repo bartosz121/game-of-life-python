@@ -1,5 +1,4 @@
 from pygame import Rect
-from color import Color
 from settings import (
     BASIC_COLORS,
     CELL_DEFAULT_COLOR,
@@ -11,35 +10,33 @@ from settings import (
 
 class Cell:
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self._color = CELL_DEFAULT_COLOR.rgb
+        self._x = x
+        self._y = y
         self._is_alive = False
-        self._num_neighbors = 0
-        # pygame.Rect(left, top, width, height)
-        # pygame.Rect(x, y, CELL_WIDTH, CELL_HEIGHT)
-        self.rect = Rect(x, y, CELL_WIDTH, CELL_HEIGHT)
+        self._rect = Rect(x, y, CELL_WIDTH, CELL_HEIGHT)
+        self.alive_neighbours = 0
+        self.color = CELL_DEFAULT_COLOR.rgb
 
     def __repr__(self):
+        return f"Cell({self.x!r}, {self.y!r})"
+
+    def __str__(self):
         return (
-            f"============================\n"
-            f"\tCell({self.x}, {self.y})\n"
-            f"\tisAlive: {self.is_alive}\n"
-            f"\tNeighbors(Alive): {self.num_neighbors}\n"
-            f"\tColor: {self.color}\n"
-            f"============================"
+            f"Cell({self.x}, {self.y}, is_alive={self.is_alive},"
+            f" alive_neighbours={self.alive_neighbours}, color={self.color})"
         )
 
-    def check_position(self):
-        return f"({self.x}, {self.y})"
+    @property
+    def x(self):
+        return self._x
 
     @property
-    def num_neighbors(self):
-        return self._num_neighbors
+    def y(self):
+        return self._y
 
-    @num_neighbors.setter
-    def num_neighbors(self, n):
-        self._num_neighbors = n
+    @property
+    def rect(self):
+        return self._rect
 
     @property
     def is_alive(self):
@@ -53,11 +50,3 @@ class Cell:
         else:
             self.color = SCREEN_BACKGROUND
         self._is_alive = state
-
-    @property
-    def color(self):
-        return self._color
-
-    @color.setter
-    def color(self, new_color: Color):
-        self._color = new_color.rgb
