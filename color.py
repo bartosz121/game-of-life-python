@@ -6,6 +6,15 @@ class Color(NamedTuple):
     g: int
     b: int
 
-    @property
-    def rgb(self) -> tuple[int, int, int]:
-        return self.r, self.g, self.b
+    def hex(self) -> str:
+        """Returns string Hex color code from RGB.
+
+        Example:
+
+        Color(0, 0, 0).hex() -> '#000000'
+
+        Color(255, 255, 255).hex() -> '#ffffff'
+
+        Color(255, 105, 180).hex() -> '#ff69b4'
+        """
+        return "#{:02x}{:02x}{:02x}".format(self.r, self.g, self.b)
