@@ -1,4 +1,6 @@
 
+# =====THIS PROJECT IS UNDERGOING CHANGES=====
+
 # Conway's Game of Life
 
 This is Game of Life written in Python 3 using pygame.
