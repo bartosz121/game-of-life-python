@@ -6,7 +6,15 @@ from random import randint
 
 from PyQt6.QtWidgets import QWidget
 from cell import Cell
-from gui.ui import Communicator, UIBuilder, MainMenuUI, PlayMenuUI, PlayUI, PauseUI
+from gui.ui import (
+    Communicator,
+    UIBuilder,
+    MainMenuUI,
+    PlayMenuUI,
+    PlayUI,
+    PauseUI,
+    MapEditorUI,
+)
 
 
 class PlayMode:
@@ -102,7 +110,7 @@ class MainMenu(GameState):
     ui = MainMenuUI()
 
     def run(self):
-        print("main menu state")
+        pass
 
 
 class Settings(GameState):
@@ -111,7 +119,7 @@ class Settings(GameState):
     # ui = SettingsUI()
 
     def run(self):
-        print("settings state")
+        pass
 
 
 class Pause(GameState):
@@ -120,7 +128,7 @@ class Pause(GameState):
     ui = PauseUI()
 
     def run(self):
-        print("pause state")
+        pass
 
 
 class PlayMenu(GameState):
@@ -129,7 +137,7 @@ class PlayMenu(GameState):
     ui = PlayMenuUI()
 
     def run(self):
-        print("play_menu state")
+        pass
 
 
 class PlayRandom(GameState, PlayMode):
@@ -156,3 +164,12 @@ class Play(GameState, PlayMode):
     def run(self, cells):
         self.count_neighbours(cells)
         self.apply_rules(cells)
+
+
+class MapEditor(GameState, PlayMode):
+    name = "map_editor"
+    allowed = ("play", "pause")
+    ui = MapEditorUI()
+
+    def run(self, cells):
+        pass
