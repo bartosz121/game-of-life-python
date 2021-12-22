@@ -5,6 +5,7 @@ from itertools import chain
 from random import randint
 
 from PyQt6.QtWidgets import QWidget
+from PyQt6.QtCore import Qt
 from cell import Cell
 from gui.ui import (
     Communicator,
@@ -115,7 +116,7 @@ class MainMenu(GameState):
 
 class Settings(GameState):
     name = "settings"
-    allowed = "main_menu"
+    allowed = tuple("main_menu")
     # ui = SettingsUI()
 
     def run(self):
@@ -170,6 +171,9 @@ class MapEditor(GameState, PlayMode):
     name = "map_editor"
     allowed = ("play", "pause")
     ui = MapEditorUI()
+
+    mouse_btn_pressed = False
+    mouse_btn_type: Qt.MouseButton = Qt.MouseButton.LeftButton
 
     def run(self, cells):
         pass

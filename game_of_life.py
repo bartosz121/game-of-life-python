@@ -1,6 +1,7 @@
 from __future__ import annotations
 from itertools import chain
 import math
+from PyQt6 import QtCore
 import numpy as np
 from PyQt6 import QtGui
 from PyQt6.QtCore import Qt
@@ -9,20 +10,25 @@ from numpy.lib.arraysetops import isin
 from cell import Cell
 from game_refactor import Game
 from settings import Settings
-from game_states import MainMenu, Pause, Play, PlayMenu, PlayRandom, PlayMode
+from game_states import MainMenu, MapEditor, Pause, Play, PlayMenu, PlayRandom, PlayMode
 from gui.ui import Communicator, MainMenuUI
 
 
 class GameOfLife(Game):
-    def __init__(self, width: int, height: int, title: str = "Game of Life"):
-        super().__init__(title, width, height)
+    def __init__(self, width: int, height: int, title: str = "Game of Life", *, timer_interval):
+        super().__init__(title, width, height, timer_interval=timer_interval)
         self.settings = self._init_settings(Settings(width, height))
         self.window.setStyleSheet(f'background-color: {self.settings.SCREEN_BACKGROUND.name()}')
-        self.window.keyPressEvent = self.key_press_event_handler
-        self.window.paintEvent = self.paintEvent
         self.state = MainMenu()
         self.c = Communicator()
         self.c.btn_clicked.connect(self.btn_clicked_handler)
+        # pyqt event listeners
+        self.window.paintEvent = self.paint_event
+        self.window.keyPressEvent = self.key_press_event
+        self.window.mouseMoveEvent = self.mouse_move_event
+        self.window.mouseReleaseEvent = self.mouse_release_event
+        self.window.mousePressEvent = self.mouse_press_event
+
         self.initialize_game()
 
     def initialize_game(self):
@@ -66,20 +72,69 @@ class GameOfLife(Game):
         return settings
 
     # PyQt listeners
-    def paintEvent(self, event: QtGui.QPaintEvent) -> None:
+    def paint_event(self, event: QtGui.QPaintEvent) -> None:
         painter = QtGui.QPainter(self.window)
         if isinstance(self.state, PlayMode):
             for cell in chain(*self.cells):
                 cell.draw(painter)
         self.window.update()
 
-    def key_press_event_handler(self, event: QtGui.QKeyEvent) -> None:
+    def mouse_move_event(self, event: QtGui.QMouseEvent):
+        if isinstance(self.state, MapEditor):
+            if self.state.mouse_btn_pressed:
+                pos = event.pos()
+                btn_type = self.state.mouse_btn_type
+                x = pos.x()
+                y = pos.y()
+                cell = self.cells[y//self.settings.CELL_HEIGHT][x//self.settings.CELL_WIDTH]
+
+                # left btn draws; right btn erases; any other draws;
+                match btn_type:
+                    case Qt.MouseButton.LeftButton:
+                        cell.is_alive = True
+                    case Qt.MouseButton.RightButton:
+                        cell.is_alive = False
+                    case _:
+                        cell.is_alive = True
+
+    def mouse_press_event(self, event: QtGui.QMouseEvent):
+        if isinstance(self.state, MapEditor):
+            self.state.mouse_btn_type = event.button()
+            self.state.mouse_btn_pressed = True
+            self.window.mouseMoveEvent(event) # change state of pressed cell; otherwise it would only work 'on move'
+
+    def mouse_release_event(self, event: QtGui.QMouseEvent):
+        if isinstance(self.state, MapEditor):
+            self.state.mouse_btn_pressed = False
+
+    def key_press_event(self, event: QtGui.QKeyEvent) -> None:
+        """
+        Keyboard shortcuts
+
+        State:
+            Key: Action
+
+        =======================================
+
+        PlayMode:
+            ESC: Change state to 'Pause'
+            M: Change state to 'Map Editor'
+
+        MapEditor:
+            M: Change state to 'Play'
+        """
         match event.key():
             case Qt.Key.Key_Escape:
                 if isinstance(self.state, PlayMode):
                     self._handle_state_change('state:pause')
                 else:
                     self._handle_state_change('state:main_menu')
+            case Qt.Key.Key_M:
+                if isinstance(self.state, PlayMode):
+                    if self.state.name == 'map_editor':
+                        self._handle_state_change('state:play')
+                    else:
+                        self._handle_state_change('state:map_editor')
             case _:
                 print(event.key())
 
@@ -105,6 +160,8 @@ class GameOfLife(Game):
                 new_state = Play
             case "pause":
                 new_state = Pause
+            case "map_editor":
+                new_state = MapEditor
             case _:
                 new_state = MainMenu
         self.state.switch(new_state, self.window, self.c)
