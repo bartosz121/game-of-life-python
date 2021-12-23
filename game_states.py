@@ -107,17 +107,8 @@ class GameState(ABC):
 
 class MainMenu(GameState):
     name = "main_menu"
-    allowed = ("play_menu", "settings")
+    allowed = ("main_menu", "play_menu")
     ui = MainMenuUI()
-
-    def run(self):
-        pass
-
-
-class Settings(GameState):
-    name = "settings"
-    allowed = tuple("main_menu")
-    # ui = SettingsUI()
 
     def run(self):
         pass
