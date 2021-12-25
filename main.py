@@ -1,8 +1,6 @@
-from game import Game
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, INGAME_FPS
+from game_of_life import GameOfLife
 
-game = Game(SCREEN_WIDTH, SCREEN_HEIGHT, INGAME_FPS)
+game = GameOfLife(800, 600, timer_interval=150)
 
-if __name__ == '__main__':
-    while game.running:
-        game.game_loop()
+if __name__ == "__main__":
+    game.run()
