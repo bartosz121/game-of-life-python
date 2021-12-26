@@ -78,7 +78,7 @@ class PlayMenuUI(UIBuilder):
             c.btn_clicked.emit("state:map_editor")
 
         def signal_btn_load_from_file():
-            c.btn_clicked.emit("state:load_from_file")  # TODO
+            c.btn_clicked.emit("state:load_from_file")
 
         def signal_btn_go_back():
             c.btn_clicked.emit("state:main_menu")
