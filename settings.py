@@ -1,32 +1,23 @@
-import math
-import pygame.font
+from dataclasses import dataclass, field
+from math import ceil
+from typing import Optional
+from PyQt6.QtGui import QColor
 
-from color import Color
 
-# ---Constants---
-# -Colors-
-BASIC_COLORS = {
-    "WHITE": Color(255, 255, 255),
-    "BLACK": Color(0, 0, 0),
-    "BLUE": Color(66, 135, 245)
-}
-# -Game-
-DISPLAY_STATISTICS = True
-INGAME_FPS = 5
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-UI_SCALE = math.ceil(SCREEN_WIDTH/SCREEN_HEIGHT)
-NORMAL_FONT_SIZE = 18*UI_SCALE
-FONT_SIZE = {
-    "SMALL": NORMAL_FONT_SIZE//2,
-    "NORMAL": NORMAL_FONT_SIZE,
-    "MEDIUM": NORMAL_FONT_SIZE * 2,
-    "BIG": NORMAL_FONT_SIZE * 3
-}
-SCREEN_BACKGROUND = BASIC_COLORS["BLUE"]
-CELL_WIDTH = 8
-CELL_HEIGHT = 8
-CELL_DEFAULT_COLOR = BASIC_COLORS["BLUE"]
-N_CELLS_HORIZONTAL = math.ceil(SCREEN_WIDTH / CELL_WIDTH)
-N_CELLS_VERTICAL = math.ceil(SCREEN_HEIGHT / CELL_HEIGHT)
-N_CELLS = N_CELLS_HORIZONTAL*N_CELLS_VERTICAL
+@dataclass
+class Settings:
+    SCREEN_WIDTH: int
+    SCREEN_HEIGHT: int
+    CELL_WIDTH: int = 8
+    CELL_HEIGHT: int = 8
+    SCREEN_BACKGROUND = QColor(66, 135, 245)
+    CELL_ALIVE_COLOR = QColor(0, 0, 0)
+    CELL_DEAD_COLOR = QColor(66, 135, 245)
+    N_CELLS_HORIZONTAL: Optional[int] = None
+    N_CELLS_VERTICAL: Optional[int] = None
+    N_CELLS: Optional[int] = None
+
+    def __post_init__(self):
+        self.N_CELLS_HORIZONTAL = ceil(self.SCREEN_WIDTH / self.CELL_WIDTH)
+        self.N_CELLS_VERTICAL = ceil(self.SCREEN_HEIGHT / self.CELL_HEIGHT)
+        self.N_CELLS = self.N_CELLS_HORIZONTAL * self.N_CELLS_VERTICAL
