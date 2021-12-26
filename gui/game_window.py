@@ -17,10 +17,11 @@ class LoggerApplication(QApplication):
         self.t.start()
         ret = QApplication.notify(self, receiver, event)
         if self.t.elapsed() > 10:
-            print(
-                f"processing event type {event.type()} for object {receiver.objectName()} "
-                f"took {self.t.elapsed()}ms"
-            )
+            pass
+            # print(
+            #     f"processing event type {event.type()} for object {receiver.objectName()} "
+            #     f"took {self.t.elapsed()}ms"
+            # )
         return ret
 
 
@@ -37,6 +38,7 @@ class GameWindow(QWidget):
         self.setWindowTitle(title)
         self.setFixedSize(width, height)
         self.setWindowFlags(QtCore.Qt.WindowType.WindowStaysOnTopHint)
+        self.setMouseTracking(True)
         self.layout = QGridLayout()
         self.setLayout(self.layout)
         # timer is used for performing some action periodically in the application
