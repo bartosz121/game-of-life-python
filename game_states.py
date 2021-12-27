@@ -7,6 +7,7 @@ from random import randint
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import Qt
 from cell import Cell
+from grid import Grid
 from gui.ui import (
     Communicator,
     UIBuilder,
@@ -165,6 +166,7 @@ class MapEditor(GameState, PlayMode):
 
     mouse_btn_pressed = False
     mouse_btn_type: Qt.MouseButton = Qt.MouseButton.LeftButton
+    loaded_grid: Grid | None = None
 
     def run(self, cells):
         pass
