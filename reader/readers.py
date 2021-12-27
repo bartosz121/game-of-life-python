@@ -24,7 +24,8 @@ class Reader(ABC):
         pass
 
     def _get_file_content(self, file_path: Path) -> list[str]:
-        content = [line.strip() for line in open(file_path, "r", encoding="utf-8")]
+        with open(file_path, "r", encoding="utf-8") as file:
+            content = [line.strip() for line in file]
         return content
 
 
