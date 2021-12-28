@@ -89,7 +89,7 @@ class PlayMenuUI(UIBuilder):
 
         self.ui_btn_play_random = QPushButton("Random alive cells")
         self.ui_btn_map_editor = QPushButton("Map Editor")
-        self.ui_btn_load_from_file = QPushButton("Load map from file")
+        self.ui_btn_load_from_file = QPushButton("Load from file")
         self.ui_btn_back = QPushButton("Back")
 
         self.ui_btn_play_random.clicked.connect(signal_btn_play_random)
