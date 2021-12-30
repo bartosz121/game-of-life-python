@@ -138,8 +138,10 @@ class CellsReader(Reader):
     def _format_to_grid(self, data: list[str]) -> Grid:
         data = [line for line in data if line[0].startswith((".", "O"))]
 
+        max_width = len(max(data, key=len))
+
         try:
-            grid_shape = (len(data), len(data[0]))
+            grid_shape = (len(data), max_width)
         except IndexError:
             raise ReaderError(f"Could not read data from {self.file_extension!r} file")
 
