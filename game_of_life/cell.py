@@ -36,8 +36,8 @@ class Cell(GridObject):
                 self.y,
                 self._width,
                 self._height,
-                self._alive_color,
-                self._dead_color,
+                f"QColor{self._alive_color.getRgb()}",
+                f"QColor{self._dead_color.getRgb()}",
             )
         )
         return f"Cell({', '.join(args)})"
