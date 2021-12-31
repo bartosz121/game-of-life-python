@@ -5,7 +5,7 @@ from itertools import chain
 from random import randint
 
 from PyQt6.QtWidgets import QWidget
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import QPoint, Qt
 from cell import Cell
 from grid import Grid
 from gui.ui import (
@@ -166,6 +166,9 @@ class MapEditor(GameState, PlayMode):
 
     mouse_btn_pressed = False
     mouse_btn_type: Qt.MouseButton = Qt.MouseButton.LeftButton
+
+    save_mode: bool = False
+    save_area: list[QPoint] = list()
     loaded_grid: Grid | None = None
 
     def run(self, cells):
