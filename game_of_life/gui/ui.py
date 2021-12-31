@@ -135,6 +135,9 @@ class PauseUI(UIBuilder):
         def signal_btn_edit_map():
             c.btn_clicked.emit("state:map_editor")
 
+        def signal_btn_select_save_area():
+            c.btn_clicked.emit("command:select_save_area")
+
         def signal_btn_load_from_file():
             c.btn_clicked.emit("command:load_from_file")
 
@@ -147,12 +150,14 @@ class PauseUI(UIBuilder):
 
         self.ui_btn_resume = QPushButton("Resume")
         self.ui_btn_edit_map = QPushButton("Edit map")
+        self.ui_btn_save_to_file = QPushButton("Save to file")
         self.ui_btn_load_from_file = QPushButton("Load from file")
         self.ui_btn_main_menu = QPushButton("Go to main menu")
         self.ui_btn_exit = QPushButton("Exit")
 
         self.ui_btn_resume.clicked.connect(signal_btn_resume)
         self.ui_btn_edit_map.clicked.connect(signal_btn_edit_map)
+        self.ui_btn_save_to_file.clicked.connect(signal_btn_select_save_area)
         self.ui_btn_load_from_file.clicked.connect(signal_btn_load_from_file)
         self.ui_btn_main_menu.clicked.connect(signal_btn_go_main_menu)
         self.ui_btn_exit.clicked.connect(window.close)
@@ -166,6 +171,7 @@ class PauseUI(UIBuilder):
         buttons_layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
         buttons_layout.addWidget(self.ui_btn_resume)
         buttons_layout.addWidget(self.ui_btn_edit_map)
+        buttons_layout.addWidget(self.ui_btn_save_to_file)
         buttons_layout.addWidget(self.ui_btn_load_from_file)
         buttons_layout.addWidget(self.ui_btn_main_menu)
         buttons_layout.addWidget(self.ui_btn_exit)
