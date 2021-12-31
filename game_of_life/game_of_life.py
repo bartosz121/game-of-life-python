@@ -2,6 +2,7 @@ from __future__ import annotations
 from itertools import chain
 import math
 import numpy as np
+import itertools
 from PyQt6 import QtGui
 from PyQt6.QtCore import QPoint, Qt
 
@@ -78,11 +79,25 @@ class GameOfLife(Game):
         if isinstance(self.state, PlayMode):
             for cell in chain(*self.grid):
                 cell.draw(painter)
-            if isinstance(self.state, MapEditor) and self.state.loaded_grid:
-                painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 0, 0)))
-                r_width = self.state.loaded_grid.x * self.settings.CELL_WIDTH
-                r_height = self.state.loaded_grid.y * self.settings.CELL_HEIGHT
-                painter.drawRect(self.mouse_pos.x(), self.mouse_pos.y(), r_width, r_height)
+            if isinstance(self.state, MapEditor):
+                if self.state.save_area:
+                    painter.setBrush(QtGui.QBrush(QtGui.QColor(0, 255, 0, 60)))
+                    if len(self.state.save_area) == 1:
+                        p1_x, p1_y = self._get_xy_from_point(self.state.save_area[0])
+                        painter.drawRect(p1_x, p1_y,self.mouse_pos.x() - p1_x, self.mouse_pos.y() - p1_y)
+                    else:
+                        # len can only be == 2
+                        p1_x, p1_y = self._get_xy_from_point(self.state.save_area[0])
+                        p2_x, p2_y = self._get_xy_from_point(self.state.save_area[1])
+                        painter.drawRect(p1_x, p1_y, p2_x - p1_x,  p2_y - p1_y)
+                        self._handle_command('save_to_file')
+
+
+                elif self.state.loaded_grid:
+                    painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 0, 0)))
+                    r_width = self.state.loaded_grid.x * self.settings.CELL_WIDTH
+                    r_height = self.state.loaded_grid.y * self.settings.CELL_HEIGHT
+                    painter.drawRect(self.mouse_pos.x(), self.mouse_pos.y(), r_width, r_height)
         self.window.update()
 
     def mouse_move_event(self, event: QtGui.QMouseEvent):
@@ -107,9 +122,19 @@ class GameOfLife(Game):
     def mouse_press_event(self, event: QtGui.QMouseEvent):
         if isinstance(self.state, MapEditor):
             self.state.mouse_btn_type = event.button()
-            self.state.mouse_btn_pressed = True
 
-            if self.state.loaded_grid:
+            if self.state.save_mode:
+                if len(self.state.save_area) < 2:
+                    match self.state.mouse_btn_type:
+                        case Qt.MouseButton.LeftButton:
+                            self.state.save_area.append(event.pos())
+                        case _:
+                            # Exit save mode if any other mouse button is pressed
+                            self.state.save_mode = False
+                            self.state.save_area.clear()
+                            self._handle_state_change("pause")
+
+            elif self.state.loaded_grid:
                 match self.state.mouse_btn_type:
                 # transpose loaded grid with RMB
                 # anti-transpose with MMB
@@ -131,6 +156,7 @@ class GameOfLife(Game):
                                     continue
                         self.state.loaded_grid = None
             else:
+                self.state.mouse_btn_pressed = True
                 self.window.mouseMoveEvent(event) # change state of pressed cell, otherwise it would only work 'on move'
 
     def mouse_release_event(self, event: QtGui.QMouseEvent):
@@ -156,6 +182,9 @@ class GameOfLife(Game):
         match event.key():
             case Qt.Key.Key_Escape:
                 if isinstance(self.state, PlayMode):
+                    if isinstance(self.state, MapEditor):
+                        self.state.save_mode = False
+                        self.state.save_area.clear()
                     self._handle_state_change('pause')
                 else:
                     self._handle_state_change('main_menu')
@@ -178,6 +207,42 @@ class GameOfLife(Game):
                 self._handle_command(msg_content)
             case _:
                 raise ValueError(f"Unknown btn_clicked msg: {msg!r}")
+
+    def _get_xy_from_point(self, p: QPoint) -> tuple[int, int]:
+        """
+        Return tuple with x and y from QPoint position
+
+        Returns:
+            tuple(x, y)
+        """
+        x = p.x()
+        y = p.y()
+        return x, y
+
+    def _get_save_area_data(self) -> Grid:
+        x1, y1 = self._get_xy_from_point(self.state.save_area[0])
+        x2, y2 = self._get_xy_from_point(self.state.save_area[1])
+
+        # Calculate area 'greedly'
+        min_x_grid = math.floor(min(x1, x2) / self.settings.CELL_WIDTH)
+        min_y_grid = math.floor(min(y1, y2) / self.settings.CELL_HEIGHT)
+        width = math.ceil(abs(x1-x2)  / self.settings.CELL_WIDTH)
+        height = math.ceil(abs(y1-y2) / self.settings.CELL_HEIGHT)
+
+        if width == 0 or height == 0:
+            raise ValueError(f"({width!r}x{height!r}) Selected area must be greater than 0")
+
+        max_x_grid = min_x_grid + width
+        max_y_grid = min_y_grid + height
+
+        selected_cells = self.grid[min_y_grid:max_y_grid, min_x_grid:max_x_grid] # slice 2d array
+
+        selected = Grid(height, width)
+
+        for y,x in itertools.product(range(height), range(width)):
+            selected[y][x] = selected_cells[y][x].is_alive
+
+        return selected
 
     def _handle_state_change(self, msg: str) -> None:
         match msg:
@@ -202,8 +267,15 @@ class GameOfLife(Game):
 
     def _handle_command(self, msg: str) -> None:
         match msg:
+            case 'select_save_area':
+                self._handle_state_change('map_editor')
+                self.state.save_mode = True
+            case 'save_to_file':
+                save_area_data = self._get_save_area_data()
+                self.file_manager.save_file(save_area_data)
+                self.state.save_mode = False
+                self.state.save_area.clear()
             case 'load_from_file':
-                # load from file
                 file_grid = self.file_manager.load_file()
                 if file_grid:
                     self.state.loaded_grid = file_grid
