@@ -49,14 +49,19 @@ Play!
 ## Demo
 
  - Start game with random alive cells
+
  ![Random cells](https://i.imgur.com/kEARdGk.gif)
  - Map editor (example of creating a [Glider](https://www.conwaylife.com/wiki/Glider))
+
  ![Copperhead spaceship](https://i.imgur.com/kkJc0lV.gif)
  - Load pattern from file ([Dragon](https://www.conwaylife.com/wiki/Dragon)) you can download a pack of patterns from [here](https://www.conwaylife.com/patterns/all.zip)
+
  ![Loading Dragon pattern from a file](https://i.imgur.com/MGLLk6V.gif)
  - Rotate loaded pattern ([Copperhead](https://www.conwaylife.com/wiki/Copperhead))
+
  ![Rotating Copperhead](https://i.imgur.com/ikCECLm.gif)
  - Save pattern to a file
+
  ![Saving and loading a glider](https://i.imgur.com/LoXKpkX.gif)
 
 ## Controls
