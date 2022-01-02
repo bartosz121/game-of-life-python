@@ -72,8 +72,11 @@ Play!
   - `Left Mouse Button` makes clicked cell **alive**
   - `Right Mouse Button` makes clicked cell **dead**
   - Press `M` to exit map editor and start the game
-  - After pattern from a file is loaded press `Left Mouse Button` to place it in the grid
   - When saving a pattern to a file press `Left Mouse Button` once to select starting point, then press `Left Mouse Button` again to choose the end
+  - After pattern from a file is loaded press:
+    - `Left Mouse Button` to place it in the grid
+    - `Right Mouse Button` to transpose it
+    - `Middle Mouse Button` to transpose it over the other diagonal
 
 
 ## Settings
