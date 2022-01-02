@@ -40,8 +40,6 @@ class FileManager:
             # could be empty when user closed file dialog without choosing a file
             path_str = "no_file"
 
-        print(path_str)
-
         return Path(path_str)
 
     def _get_open_file_path(self) -> Path:
