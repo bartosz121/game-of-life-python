@@ -30,9 +30,6 @@ class Game:
         self.window.show()
         sys.exit(self.app.exec())
 
-    def testing(self, event) -> None:
-        print(event.key())
-
     @abstractmethod
     def run(self):
         ...
