@@ -1,6 +1,3 @@
-
-# =====THIS PROJECT IS UNDERGOING CHANGES=====
-
 # Conway's Game of Life
 
 Python >=3.10 implementation of [Conway's Game of Life](https://www.conwaylife.com/wiki/Main_Page) using PyQt6
